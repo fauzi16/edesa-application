@@ -1,0 +1,9 @@
+package com.edesa.dao.dtpl.master;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.edesa.model.dtpl.master.RegistrationInfo;
+
+public interface RegistrationInfoRepository extends JpaRepository<RegistrationInfo, Long> {
+    
+}
