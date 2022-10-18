@@ -4,8 +4,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Service;
+
 import com.edesa.model.dtpl.master.User;
 
+@Service
 public class UCCommonService {
 
     public User userInfo(String email) {
