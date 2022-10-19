@@ -18,5 +18,10 @@ public class UserController extends AbstractController<User, Long, UserService> 
     UserController(UserService service) {
         super(service, User.class, Long.class);
     }
+
+    // @
+    // public User register(String name,  String email, String password, String nomorHp, String alamat) {
+    //     return null;
+    // }
     
 }
