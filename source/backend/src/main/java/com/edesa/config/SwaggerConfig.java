@@ -33,7 +33,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .groupName("Authentication Related Controller")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.swantik.controller.standard.auth"))
+                .apis(RequestHandlerSelectors.basePackage("com.edesa.controller.standard.auth"))
                 .build()
                 .apiInfo(metaInfo());
     }
@@ -45,7 +45,7 @@ public class SwaggerConfig {
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.swantik.controller.standard.dtpl.master"))
+                .apis(RequestHandlerSelectors.basePackage("com.edesa.controller.standard.dtpl.master"))
                 .build()
                 .apiInfo(metaInfo());
     }
@@ -58,11 +58,23 @@ public class SwaggerConfig {
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.swantik.controller.standard.dtpl.transaction"))
+                .apis(RequestHandlerSelectors.basePackage("com.edesa.controller.standard.dtpl.transaction"))
                 .build()
                 .apiInfo(metaInfo());
     }
     
+    @Bean
+    public Docket useCaseApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("Use Case Controller")
+                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(Arrays.asList(apiKey()))
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.edesa.controller.standard.dtpl.usecase"))
+                .build()
+                .apiInfo(metaInfo());
+    }
+
     private ApiInfo metaInfo() {
         ApiInfo apiInfo = new ApiInfo(
                 "EDesa Backend API",
