@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModelProperty.AccessMode;
 
@@ -33,18 +35,21 @@ public class UserInfo {
 
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "roleId", referencedColumnName = "id", insertable = false, updatable = false)
     private Role role;
     private Long roleId;
 
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "registrationInfoId", referencedColumnName = "id", insertable = false, updatable = false)
     private RegistrationInfo registrationInfo;
     private Long registrationInfoId;
 
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "businessUnitId", referencedColumnName = "id", insertable = false, updatable = false)
     private BusinessUnit businessUnit;
     private Long businessUnitId;

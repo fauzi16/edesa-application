@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.edesa.model.dtpl.master.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModelProperty.AccessMode;
@@ -28,18 +29,21 @@ public class Issue {
     
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "createdBy", referencedColumnName = "id", insertable = false, updatable = false)
     private User createdByInfo;
     private Long createdBy;
 
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "assignee", referencedColumnName = "id", insertable = false, updatable = false)
     private User assigneeInfo;
     private Long assignee;
 
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "assignedBy", referencedColumnName = "id", insertable = false, updatable = false)
     private User assignedByInfo;
     private Long assignedBy;

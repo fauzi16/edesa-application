@@ -83,6 +83,7 @@ public class UCRegistrationController extends BaseController {
         user.setUsername(regInfo.getEmail());
         user.setUserInfo(userInfo);
         user.setUserInfoId(userInfo.getId());
+        user.setActive(true);
         userRepository.save(user);
 
         return user;

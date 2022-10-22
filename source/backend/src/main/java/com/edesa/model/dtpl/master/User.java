@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiModelProperty.AccessMode;
 
@@ -26,6 +28,7 @@ public class User {
 
     @OneToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JoinColumn(name = "userInfoId", referencedColumnName = "id", insertable = false, updatable = false)
     private UserInfo userInfo;
     private Long userInfoId;
