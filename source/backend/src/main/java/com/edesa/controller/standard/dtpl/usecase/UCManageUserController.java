@@ -40,7 +40,7 @@ public class UCManageUserController extends BaseController {
     private BusinessUnitRepository businessUnitRepository;
     
     @RequestMapping(value = "/create/admin", method = RequestMethod.POST)
-    public User createUserAdmin(UserAdminInfo adminInfo){
+    public User createUserAdmin(@RequestBody UserAdminInfo adminInfo){
         if(isNil(adminInfo.getAlamat())) {
             throw new EDesaException("alamat tidak boleh kosong");
         }
@@ -83,7 +83,7 @@ public class UCManageUserController extends BaseController {
     }
 
     @RequestMapping(value = "/create/perangkat-desa", method = RequestMethod.POST)
-    public User createUserPerangkatDesa(UserPerangkatDesaInfo info){
+    public User createUserPerangkatDesa(@RequestBody UserPerangkatDesaInfo info){
         if(isNil(info.getAlamat())) {
             throw new EDesaException("alamat tidak boleh kosong");
         }
