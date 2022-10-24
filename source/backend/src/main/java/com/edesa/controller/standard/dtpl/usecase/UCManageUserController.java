@@ -2,6 +2,7 @@ package com.edesa.controller.standard.dtpl.usecase;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import com.edesa.model.dtpl.master.BusinessUnit;
 import com.edesa.model.dtpl.master.Role;
 import com.edesa.model.dtpl.master.User;
 import com.edesa.model.dtpl.master.UserInfo;
+
 
 
 @RestController
@@ -127,6 +129,36 @@ public class UCManageUserController extends BaseController {
         user.setUserInfo(userInfo);
         user.setUserInfoId(userInfo.getId());
         user.setActive(true);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    @RequestMapping(value = "/edit/user", method = RequestMethod.POST)
+    public User editUser(String username, @RequestBody UserInfo payloadUserInfo) {
+        User user = userRepository.findByUsername(username);
+        if(user == null) {
+            throw new EDesaException("User dengan username '" + username + "' tidak ditemukan");
+        }
+
+        UserInfo savedUserInfo = user.getUserInfo();
+        this.setNewValues(savedUserInfo, payloadUserInfo);
+
+        userInfoRepository.save(savedUserInfo);
+        
+        return user;
+    }
+
+    @RequestMapping(value = "/status/user", method = RequestMethod.POST)
+    public User activateOrInactivateUser(String username, boolean isActive) {
+        User user = userRepository.findByUsername(username);
+
+        if(user == null) {
+            throw new EDesaException("User dengan username '" + username + "' tidak ditemukan");
+        }
+
+        user.setActive(isActive);
+    
         userRepository.save(user);
 
         return user;
