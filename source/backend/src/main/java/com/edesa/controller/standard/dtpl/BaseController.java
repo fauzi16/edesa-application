@@ -15,8 +15,8 @@ public class BaseController {
 
     public void setNewValues(Object saved, Object payload) {
         try {
-            Class<?> clazz = payload.getClass().getClass();
-            Field[] fields = clazz.getFields();
+            Class<?> clazz = payload.getClass();
+            Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
                 if (field.getName().equals("id"))
                     continue;
