@@ -2,8 +2,8 @@ import React from 'react';
 import NextHead from 'next/head'
 import { string } from 'prop-types'
 
-const defaultDescription = 'SIPENGADU'
-const defaultOGURL = 'https://sipengadu.manudjaya.com/'
+const defaultDescription = 'E-DESA'
+const defaultOGURL = 'https://edesa.manudjaya.com/'
 const defaultOGImage = 'https://manudjaya.com/public/logo.png'
 const defaultKeywords = 'Aplikasi pengaduan untuk warga desa Manud Jaya'
 const Head = props => (

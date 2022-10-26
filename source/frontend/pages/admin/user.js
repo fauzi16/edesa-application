@@ -87,7 +87,7 @@ const User = () => {
     },[admin, merchants, customer])
     return(
         <Fragment>
-            <Head title="Manajamen User - SIPENGADU"/>
+            <Head title="Manajamen User - E-DESA"/>
             <Navbar/>
             <div className="d-flex">
                 <Sidebar/>

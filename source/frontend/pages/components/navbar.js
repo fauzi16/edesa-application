@@ -50,6 +50,7 @@ const Navbar = (props) => {
     useEffect(() => {
         getBasketDetail();
     },[])
+
     return(
         <nav className="navbar navbar-expand-lg navbar-light sticky-top">
             <div className="container-fluid">
@@ -59,7 +60,7 @@ const Navbar = (props) => {
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
                     <Link href="/">
                         <a className="navbar-brand text-primary">
-                            <h3>SIPENGADU</h3>
+                            <h3>E-DESA</h3>
                         </a>
                     </Link>
                     <div className="navbar-nav me-auto mb-2 mb-lg-0 m-l-20">
@@ -68,16 +69,10 @@ const Navbar = (props) => {
                         <div className=" d-flex">
                             <a className="dropdown-toggle menus" data-toggle="dropdown" onClick={() => setShow(!show)}>
                                 <div className="d-flex align-items-center">
-                                    <img src="../default.png" className="profile-photo" alt="profil"/>
                                     <span>Hi, {user.user?.email}</span>
                                 </div>
                             </a>
                             <div className={`dropdown-menu dropdown-navbar dropdown-login-menu ${show ? 'show' : ''}`}>
-                                {user?.user?.roleId == 1 &&
-                                    <Link href="/profile">
-                                        <a className="dropdown-item" >Profil</a>
-                                    </Link>
-                                }
                                 <a className="dropdown-item" onClick={user.logout}>Keluar</a>
                             </div>
                         </div>

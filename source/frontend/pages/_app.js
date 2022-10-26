@@ -59,7 +59,7 @@ const MyApp = ({ Component, pageProps }) => {
     setToken(cookie.remove(TOKEN,{ path: '/' }))
     ls.remove('token')
     ls.remove('user')
-    Router.push('/login');
+    Router.push('/');
   }
 
   useEffect(()=>{
