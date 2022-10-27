@@ -10,46 +10,8 @@ import { TOKEN } from '../../utils/constant';
 import axios from 'axios';
 
 const Navbar = (props) => {
-    const [keyword, setKeyword] = useState('');
-    const [showSearch, setShowSearch] = useState(false);
     const user = useContext(UserContext);
-    const [category, setCategory] = useState('Treatment Kecantikan');
-    const [isCollapse, setIsCollapse] = useState(false);
     const [show, setShow] = useState(false);
-    const [basketList, setBasketList] = useState([]);
-    const router = useRouter();
-    const showMenu = (e) => {
-        e.preventDefault();
-        setShowSearch(!showSearch)
-    }
-    const  _handleKeyDown = (e) => {
-        var code = e.keyCode || e.which;
-        if (code === 13) {
-            e.preventDefault();
-            router.push(`/products?keyword=${keyword}&type=${category == 'Treatment Kecantikan' ? 2:1}`)
-        }
-    }
-
-    const getBasketDetail = () => {
-        const url = `http://168.138.181.227:8080/basketDetails`;
-        axios.get(url, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {'Authorization': `Bearer ${cookie.get(TOKEN)}`},
-        })
-        .then(resp => {
-            let list=[];
-            resp.data.map((d) => 
-                list.push({...d, checked: false})
-            )
-            setBasketList(list)
-        }).catch(err => {
-            console.log('err', err)
-        });   
-    }
-    useEffect(() => {
-        getBasketDetail();
-    },[])
 
     return(
         <nav className="navbar navbar-expand-lg navbar-light sticky-top">

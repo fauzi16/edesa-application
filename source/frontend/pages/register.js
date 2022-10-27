@@ -56,7 +56,7 @@ const Register = () => {
                         setSeverity('success')
                         setMessage('Berhasil mendaftarkan Warga')
                         setTimeout(() => {        
-                            router.push(`/login`)
+                            router.push(`/`)
                         }, 200);
                         
                     }
