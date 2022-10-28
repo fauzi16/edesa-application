@@ -1,14 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useFormik} from 'formik';
 import { useRouter } from 'next/router';
 import Head from './components/head';
 import * as Yup from 'yup';
 import axios from 'axios';
 import {Grid, Button, Alert, Container, Card, CardContent} from '@mui/material';
-import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Link from 'next/link';
-import {dateDefault} from '../utils/helpers';
 const Register = () => {
     const [status, setStatus] = useState(false);
     const [severity, setSeverity] = useState('');
@@ -23,7 +21,6 @@ const Register = () => {
             .min(6, 'Password minimal 6 karakter')
             .required('Konfirmasi password wajib diisi')
             .oneOf([Yup.ref('password'), null], 'Password harus sama'),
-        dateOfBirth: Yup.string().required('Tanggal lahir wajib diisi'),
         name: Yup.string().required('Nama wajib diisi'),
         address: Yup.string().required('Alamat wajib diisi'),
         phone: Yup.string().required('Nomor HP wajib diisi'),
@@ -31,7 +28,6 @@ const Register = () => {
     const initialValues = {
         email: '',
         password: '',
-        dateOfBirth: new Date(),
         name: '',
         password_confirmation: '',
         phone:'',
@@ -41,15 +37,14 @@ const Register = () => {
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = 'http://168.138.181.227:8080/registration/customer';
+            const url = 'http://localhost:8080/registration/warga';
             const data = {
-                dateOfBirth: dateDefault(values.dateOfBirth),
+                alamat: values.address,
                 email: values.email,
                 name: values.name,
                 password: values.password,
-                address: values.address,
-                phone: values.phone
-              }
+                hp: values.phone
+            }
             axios.post(url, data)
                 .then(function (response) {
                     if (response.status !== 200) {
@@ -59,36 +54,37 @@ const Register = () => {
                     } else {
                         setStatus(true);
                         setSeverity('success')
-                        setMessage('Berhasil mendaftarkan Customer')
+                        setMessage('Berhasil mendaftarkan Warga')
                         setTimeout(() => {        
-                            router.push(`/verify-code?email=${values.email}`)
+                            router.push(`/`)
                         }, 200);
                         
                     }
                 })
                 .catch(function (error) {
-                    if (error.response.status !== 200) {
-                        setStatus(false);
-                    } else {
+                    console.log(error)
+                    if (error.response.data.status !== 200) {
                         setStatus(true);
+                        setSeverity('error')
+                        setMessage(error.response.data.message)
                     }
                 });
         },
     });
     return(
         <div className="bg-primary">
-            <Head title="Register - SIPENGADU" />
+            <Head title="Register - E-DESA" />
             <Container>
               <Grid container spacing={2}>
                 <Grid item md={7} sm={6} xs={12}>
-                  <h1 className="text-white">SIPENGADU</h1>
+                  <h1 className="text-white">E-DESA</h1>
                   <hr className="text-white"/>
                   <div className="m-t-20 text-white">
-                    SIPENGADU dibentuk untuk merealisasikan kebijakan 
+                    E-DESA dibentuk untuk merealisasikan kebijakan 
                     “no wrong door policy” yang menjamin hak masyarakat agar 
                     pengaduan dari manapun dan jenis apapun akan disalurkan 
                     kepada penyelenggara pelayanan publik yang berwenang 
-                    menanganinya. SIPENGADU bertujuan agar:
+                    menanganinya. E-DESA bertujuan agar:
                     <ol>
                       <li>Penyelenggara dapat mengelola pengaduan dari masyarakat secara sederhana, cepat, tepat, tuntas, dan terkoordinasi dengan baik;</li>
                       <li>Penyelenggara memberikan akses untuk partisipasi masyarakat dalam menyampaikan pengaduan; dan</li>
@@ -119,9 +115,9 @@ const Register = () => {
                                 </div>
                                 <div className="form-group">
                                     <label className="font-semibold">Nomor HP</label>
-                                    <input type="number" className="form-control form-swantik" placeholder="Masukkan nomor hp" value={formik.values.hp} onChange={(e)=>formik.setFieldValue('hp', e.target.value)}/>
-                                    {formik.errors.hp && formik.touched.hp ?
-                                        <div className="text-sm text-danger">{formik.errors.hp}</div>:null
+                                    <input type="number" className="form-control form-swantik" placeholder="Masukkan nomor hp" value={formik.values.phone} onChange={(e)=>formik.setFieldValue('phone', e.target.value)}/>
+                                    {formik.errors.phone && formik.touched.phone ?
+                                        <div className="text-sm text-danger">{formik.errors.phone}</div>:null
                                     }
                                 </div>
                                 <div className="form-group">
@@ -129,21 +125,6 @@ const Register = () => {
                                     <input type="text" className="form-control form-swantik" placeholder="Masukkan alamat" value={formik.values.address} onChange={(e)=>formik.setFieldValue('address', e.target.value)}/>
                                     {formik.errors.address && formik.touched.address ?
                                         <div className="text-sm text-danger">{formik.errors.address}</div>:null
-                                    }
-                                </div>
-                                <div className="form-group">
-                                    <label className="font-semibold">Tanggal Lahir</label>
-                                    <DatePicker
-                                        selected={formik.values.dateOfBirth}
-                                        onChange={(date) => formik.setFieldValue('dateOfBirth', date)}
-                                        dateFormat="dd/MM/yyyy"
-                                        className="form-control form-swantik"
-                                        showYearDropdown
-                                        yearDropdownItemNumber={50}
-                                        scrollableYearDropdown
-                                    />
-                                    {formik.errors.dateOfBirth && formik.touched.dateOfBirth ?
-                                        <div className="text-sm text-danger">{formik.errors.dateOfBirth}</div>:null
                                     }
                                 </div>
                                 <div className="form-group">

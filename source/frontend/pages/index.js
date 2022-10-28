@@ -36,8 +36,9 @@ const Index = () => {
                 username: values.email, 
                 password: values.password
             }
-            axios.post('http://168.138.181.227:8080/authenticate2', data)
+            axios.post('http://localhost:8080/authenticate2', data)
                 .then(function (response) {
+                    console.log(response)
                     if (response.status !== 200) {
                         setStatus(true);
                         setSeverity('error');
@@ -48,49 +49,46 @@ const Index = () => {
                         setMessage('Berhasil login');
                         cookie.set(TOKEN, response.data.jwttoken, { path: '/' });
                         ls.set('token', response.data.jwttoken)
-                        axios.get('http://168.138.181.227:8080/common/authenticated-user-info', {
-                                method: 'GET',
-                                mode: 'cors',
-                                headers: { 'Authorization': `Bearer ${response.data.jwttoken}` },
-                            })
+                        const head = {
+                            headers: {
+                                'Authorization': `Bearer ${response.data.jwttoken}`
+                            }
+                        }
+                        const data =  {
+                            email: values.email
+                        }
+                        axios.post('http://localhost:8080/userInfos/find-alldata-by-sample', data, head)
                             .then(resp => {
-                                console.log(resp)
-                                user.setUser(resp.data)
-                                ls.set('user', resp.data)
-                                if(resp.data.roleId === 1) {
-                                    router.push("/")
-                                }else if(resp.data.roleId === 2){
-                                    router.push("/merchant/dashboard")
-                                }else{
-                                    router.push("/admin/dashboard")
-                                }
+                                user.setUser(resp.data && resp.data[0])
+                                ls.set('user', resp.data && resp.data[0])
+                                router.push("/admin/dashboard")
                             }).catch(err => console.log('err', err));      
                         
                     }
                 })
                 .catch(function (error) {
-                    if (error.response?.status !== 200) {
-                        setStatus(false);
-                    } else {
+                    if (error?.response?.data?.status !== 200) {
                         setStatus(true);
+                        setSeverity('error')
+                        setMessage(error?.response?.data?.message)
                     }
                 });
         }
     });
     return(
         <div className="bg-primary">
-            <Head title="Login - SIPENGADU" />
+            <Head title="Login - E-DESA" />
             <Container style={{height:'100vh'}}>
               <Grid container spacing={2}>
                 <Grid item md={7} sm={6} xs={12}>
-                  <h1 className="text-white">SIPENGADU</h1>
+                  <h1 className="text-white">E-DESA</h1>
                   <hr className="text-white"/>
                   <div className="m-t-20 text-white">
-                    SIPENGADU dibentuk untuk merealisasikan kebijakan 
+                    E-DESA dibentuk untuk merealisasikan kebijakan 
                     “no wrong door policy” yang menjamin hak masyarakat agar 
                     pengaduan dari manapun dan jenis apapun akan disalurkan 
                     kepada penyelenggara pelayanan publik yang berwenang 
-                    menanganinya. SIPENGADU bertujuan agar:
+                    menanganinya. E-DESA bertujuan agar:
                     <ol>
                       <li>Penyelenggara dapat mengelola pengaduan dari masyarakat secara sederhana, cepat, tepat, tuntas, dan terkoordinasi dengan baik;</li>
                       <li>Penyelenggara memberikan akses untuk partisipasi masyarakat dalam menyampaikan pengaduan; dan</li>

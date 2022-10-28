@@ -9,14 +9,19 @@ import axios from 'axios';
 import UserContext from '../../utils/UserContext';
 import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import {
-    DataGridPro,
-    GridActionsCellItem,
-  } from '@mui/x-data-grid-pro';
-const User = () => {
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+const Pelaporan = () => {
+    const user = useContext(UserContext);
+    const [message, setMessage] = useState('');
+    const [name, setName] = useState('');
+    const [role, setRole] = useState('');
+    const [status, setStatus] = useState('');
     const [admin, setAdmin] = useState([]);
+    const [customer, setCustomer] = useState([]);
+    const [merchants, setmerchants] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [data, setData] = useState(null);
     const getUsers = () => {
         const url = `http://localhost:8080/users`;
         const head = {
@@ -26,12 +31,8 @@ const User = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            let data = [];
-            resp.data.filter((a)=>a.username !== null).map((d)=>
-                data.push(d.userInfo)
-            )
-            setAdmin(data)
-            console.log(data)
+            setAdmin(resp.data)
+            console.log(resp.data)
         }).catch(err => {
             console.log('err', err)
         });  
@@ -43,23 +44,12 @@ const User = () => {
     },[])
 
     const columns = [
-        { field: 'email', headerName: 'Username', width: 250  },
-        { field: 'name', headerName: 'Nama', width: 250  },
-        { field: 'hp', headerName: 'Nomor HP', width: 250  },
-        { field: 'roleId', headerName: 'Role', width: 250  },
-        {
-            field: 'actions',
-            type: 'actions',
-            width: 100,
-            headerName: 'Aksi',
-            getActions: () => [
-              <GridActionsCellItem icon={<EditIcon />} label="Edit" />,
-            ],
-        },
+        { field: 'username', headerName: 'Username', width: 250  },
+        { headerName: 'Nama - Nomor HP - Role', valueGetter: (params) => `${params.row.userInfo?.name} - ${params.row.userInfo?.hp} - ${params.row.userInfo?.role?.name}`, width: 600 },
     ];
     return(
         <Fragment>
-            <Head title="Manajamen User - E-DESA"/>
+            <Head title="Pelaporan - E-DESA"/>
             <Navbar/>
             <div className="d-flex">
                 <Sidebar/>
@@ -67,19 +57,23 @@ const User = () => {
                     <div id="content">
                         <Grid container spacing={2}>
                             <Grid item md={6} xs={12}>
-                                <div className="heading-2">MANAJEMEN USER</div>
+                                <div className="heading-2">PELAPORAN</div>
                             </Grid>
                             <Grid item md={6} xs={12} className="text-right">
-                                <Link href="/admin/add_user">
-                                    <Button variant="contained" color="primary">TAMBAH USER</Button>
-                                </Link>
+                                {user?.user?.roleId === 3 &&
+                                    <Link href="/admin/add_pelaporan">
+                                        <Button variant="contained" color="primary">TAMBAH PELAPORAN</Button>
+                                    </Link>
+                                }
                             </Grid>
                         </Grid>   
                         <br/>
                         <div style={{ height: 400, width: '100%' }}>
-                            <DataGridPro
+                            <DataGrid
                                 rows={admin}
                                 columns={columns}
+                                pageSize={10}
+                                rowsPerPageOptions={[5]}
                             />
                         </div>
                         
@@ -90,4 +84,4 @@ const User = () => {
         </Fragment>
     )
 }
-export default User;
+export default Pelaporan;
