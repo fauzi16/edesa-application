@@ -58,7 +58,7 @@ public class UCRegistrationController extends BaseController {
 
         User sameUser = userRepository.findByUsername(regInfo.getEmail());
         if(sameUser != null) {
-            throw new EDesaException("username sudah digunakan"); 
+            throw new EDesaException("Email sudah digunakan"); 
         }
 
         RegistrationInfo info = new RegistrationInfo();
