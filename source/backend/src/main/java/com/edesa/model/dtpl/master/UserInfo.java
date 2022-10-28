@@ -54,6 +54,13 @@ public class UserInfo {
     private BusinessUnit businessUnit;
     private Long businessUnitId;
 
+    @ManyToOne
+    @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JoinColumn(name = "residenceId", referencedColumnName = "id", insertable = false, updatable = false)
+    private Residence residence;
+    private Long residenceId;
+
     public Long getId() {
         return id;
     }
@@ -148,6 +155,22 @@ public class UserInfo {
 
     public void setBusinessUnitId(Long businessUnitId) {
         this.businessUnitId = businessUnitId;
+    }
+
+    public Residence getResidence() {
+        return residence;
+    }
+
+    public void setResidence(Residence residence) {
+        this.residence = residence;
+    }
+
+    public Long getResidenceId() {
+        return residenceId;
+    }
+
+    public void setResidenceId(Long residenceId) {
+        this.residenceId = residenceId;
     }
 
     

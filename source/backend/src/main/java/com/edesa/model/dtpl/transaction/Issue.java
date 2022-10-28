@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.edesa.model.dtpl.master.BusinessUnit;
+import com.edesa.model.dtpl.master.Residence;
 import com.edesa.model.dtpl.master.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,11 +23,19 @@ import io.swagger.annotations.ApiModelProperty.AccessMode;
 @Entity
 @Table(name = "dtpl_trs_issue")
 public class Issue {
+
+    public final static String STATUS_NEW = "NEW";
+    public final static String STATUS_OPEN = "OPEN";
+    public final static String STATUS_CLOSED = "CLOSED";
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Timestamp createdTime;
+
+    private String coordinate;
+    private String description;
+    private String status;
     
     @ManyToOne
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
@@ -47,6 +57,20 @@ public class Issue {
     @JoinColumn(name = "assignedBy", referencedColumnName = "id", insertable = false, updatable = false)
     private User assignedByInfo;
     private Long assignedBy;
+
+    @ManyToOne
+    @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JoinColumn(name = "businessUnitId", referencedColumnName = "id", insertable = false, updatable = false)
+    private BusinessUnit businessUnit;
+    private Long businessUnitId;
+
+    @ManyToOne
+    @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JoinColumn(name = "residenceId", referencedColumnName = "id", insertable = false, updatable = false)
+    private Residence residence;
+    private Long residenceId;
 
     @OneToMany(mappedBy = "issueId")
     @ApiModelProperty(accessMode = AccessMode.READ_ONLY)
@@ -107,7 +131,47 @@ public class Issue {
     public void setIssueUpdates(List<IssueUpdate> issueUpdates) {
         this.issueUpdates = issueUpdates;
     }
-
-    
+    public BusinessUnit getBusinessUnit() {
+        return businessUnit;
+    }
+    public void setBusinessUnit(BusinessUnit businessUnit) {
+        this.businessUnit = businessUnit;
+    }
+    public Long getBusinessUnitId() {
+        return businessUnitId;
+    }
+    public void setBusinessUnitId(Long businessUnitId) {
+        this.businessUnitId = businessUnitId;
+    }
+    public Residence getResidence() {
+        return residence;
+    }
+    public void setResidence(Residence residence) {
+        this.residence = residence;
+    }
+    public Long getResidenceId() {
+        return residenceId;
+    }
+    public void setResidenceId(Long residenceId) {
+        this.residenceId = residenceId;
+    }
+    public String getCoordinate() {
+        return coordinate;
+    }
+    public void setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
 }

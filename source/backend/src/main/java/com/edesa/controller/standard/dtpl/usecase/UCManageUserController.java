@@ -11,11 +11,13 @@ import com.edesa.controller.standard.dtpl.BaseController;
 import com.edesa.controller.standard.dtpl.usecase.model.UserAdminInfo;
 import com.edesa.controller.standard.dtpl.usecase.model.UserPerangkatDesaInfo;
 import com.edesa.dao.dtpl.master.BusinessUnitRepository;
+import com.edesa.dao.dtpl.master.ResidenceRepository;
 import com.edesa.dao.dtpl.master.RoleRepository;
 import com.edesa.dao.dtpl.master.UserInfoRepository;
 import com.edesa.dao.dtpl.master.UserRepository;
 import com.edesa.exception.EDesaException;
 import com.edesa.model.dtpl.master.BusinessUnit;
+import com.edesa.model.dtpl.master.Residence;
 import com.edesa.model.dtpl.master.Role;
 import com.edesa.model.dtpl.master.User;
 import com.edesa.model.dtpl.master.UserInfo;
@@ -38,6 +40,9 @@ public class UCManageUserController extends BaseController {
 
     @Autowired
     private BusinessUnitRepository businessUnitRepository;
+
+    @Autowired
+    private ResidenceRepository residenceRepository;
     
     @RequestMapping(value = "/create/admin", method = RequestMethod.POST)
     public User createUserAdmin(@RequestBody UserAdminInfo adminInfo){
@@ -106,6 +111,11 @@ public class UCManageUserController extends BaseController {
         if(businessUnit == null) {
             throw new EDesaException("business unit tidak ditemukan"); 
         }
+
+        Residence residence = residenceRepository.findById(info.getResidenceId()).get();
+        if(residence == null) {
+            throw new EDesaException("residence tidak ditemukan"); 
+        }
         
         UserInfo userInfo = new UserInfo();
         userInfo.setAddress(info.getAlamat());
@@ -115,11 +125,12 @@ public class UCManageUserController extends BaseController {
         userInfo.setName(info.getName());
         userInfo.setBusinessUnit(businessUnit);
         userInfo.setBusinessUnitId(businessUnit.getId());
+        userInfo.setResidenceId(residence.getId());
         userInfoRepository.save(userInfo);
 
         
         
-        Role roleAdmin = roleRepository.findById(1l).get();
+        Role roleAdmin = roleRepository.findById(2l).get();
         userInfo.setRole(roleAdmin);
         userInfo.setRoleId(roleAdmin.getId());
 

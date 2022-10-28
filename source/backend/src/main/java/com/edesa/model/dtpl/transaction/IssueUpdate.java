@@ -18,6 +18,7 @@ public class IssueUpdate {
     private Long id;
     private Long updateById;
     private Timestamp updateTime;
+    private String status;
 
     @Column(columnDefinition="TEXT")
     private String comment;
@@ -62,6 +63,14 @@ public class IssueUpdate {
 
     public void setIssueId(Long issueId) {
         this.issueId = issueId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 

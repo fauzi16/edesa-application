@@ -8,10 +8,10 @@ import com.edesa.model.dtpl.master.BusinessUnit;
 import com.edesa.service.AbstractService;
 
 @Service
-public class BusinessInfoService extends AbstractService<BusinessUnit, Long, BusinessUnitRepository> {
+public class BusinessUnitService extends AbstractService<BusinessUnit, Long, BusinessUnitRepository> {
 
     @Autowired
-    protected BusinessInfoService(BusinessUnitRepository dao) {
+    protected BusinessUnitService(BusinessUnitRepository dao) {
         super(dao);
     }
     

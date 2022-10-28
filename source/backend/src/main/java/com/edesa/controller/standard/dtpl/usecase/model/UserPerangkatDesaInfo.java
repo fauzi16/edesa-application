@@ -8,6 +8,7 @@ public class UserPerangkatDesaInfo {
     private String alamat;
 
     private Long businessUnit;
+    private Long residenceId;
     
 
     public String getName() {
@@ -48,6 +49,14 @@ public class UserPerangkatDesaInfo {
 
     public void setBusinessUnit(Long businessUnit) {
         this.businessUnit = businessUnit;
+    }
+
+    public Long getResidenceId() {
+        return residenceId;
+    }
+
+    public void setResidenceId(Long residenceId) {
+        this.residenceId = residenceId;
     }
 
     
