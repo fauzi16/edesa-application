@@ -9,14 +9,16 @@ import axios from 'axios';
 import UserContext from '../../utils/UserContext';
 import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useRouter } from 'next/router'
 import {
     DataGridPro,
     GridActionsCellItem,
   } from '@mui/x-data-grid-pro';
 const User = () => {
     const [admin, setAdmin] = useState([]);
+    const router = useRouter();
+    
     const getUsers = () => {
         const url = `http://localhost:8080/users`;
         const head = {
@@ -31,7 +33,6 @@ const User = () => {
                 data.push(d.userInfo)
             )
             setAdmin(data)
-            console.log(data)
         }).catch(err => {
             console.log('err', err)
         });  
@@ -52,8 +53,8 @@ const User = () => {
             type: 'actions',
             width: 100,
             headerName: 'Aksi',
-            getActions: () => [
-              <GridActionsCellItem icon={<EditIcon />} label="Edit" />,
+            getActions: ({id}) => [
+              <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={()=>router.push(`/admin/edit_user?id=${id}`)}/>,
             ],
         },
     ];
@@ -76,7 +77,7 @@ const User = () => {
                             </Grid>
                         </Grid>   
                         <br/>
-                        <div style={{ height: 400, width: '100%' }}>
+                        <div style={{ height: 600, width: '100%' }}>
                             <DataGridPro
                                 rows={admin}
                                 columns={columns}

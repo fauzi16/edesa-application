@@ -11,18 +11,42 @@ import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
-const AddUser = () => {
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import {dateDefault} from '../../utils/helpers';
+
+const EditUser = () => {
     const user = useContext(UserContext);
     const router = useRouter();
+    const [users, setUsers] = useState({});
     const [status, setStatus] = useState(false);
     const [severity, setSeverity] = useState('');
     const [message, setMessage] = useState('');
-    const [merchantId, setMerchantId] = useState('');
+    console.log(router)
+    const id = router.query.id;
+    const getUser = () => {
+        const url = `http://localhost:8080/users/${id}`;
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.get(url, head)
+        .then(resp => {
+            setUsers(resp.data)
+        }).catch(err => {
+            console.log('err', err)
+        });  
+    }
+    useEffect(()=>{
+        getUser();
+    },[])
+    console.log(users)
     const schema = Yup.object().shape({
         name: Yup.string().required('Nama perangkat desa wajib diisi'),
         alamat: Yup.string().required('Alamat wajib diisi'),
         phone: Yup.string().required('Nomor HP wajib diisi'),
-        email: Yup.string().email('Format email salah').required('Email wajib diisi'),
+        dateOfBirth: Yup.string().required('Tanggal lahir wajib diisi'),
         businessUnit: Yup.string()
         .when('role', {
           is: '2',
@@ -32,24 +56,35 @@ const AddUser = () => {
         role: Yup.string().required('Role wajib dipilih'),
     });
     const initialValues = {
-        name:'',
+        name: '',
         alamat:'',
         phone: '',
-        email:'',
         businessUnit:'',
         role:'',
+        dateOfBirth: new Date(),
     };
+    useEffect(()=>{
+        formik.setFieldValue('name', users?.userInfo?.name)
+        formik.setFieldValue('alamat', users?.userInfo?.address)
+        formik.setFieldValue('phone', users?.userInfo?.hp)
+        formik.setFieldValue('businessUnit', users?.userInfo?.businessUnit)
+        formik.setFieldValue('role', users?.roleId)
+    },[users])
     const formik = useFormik({
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://localhost:8080/management-user/create/${values.role == '1'? 'admin':'perangkat-desa'}`;
+            const url = `http://localhost:8080/management-user/edit/user`;
             const data = {
-                alamat: values.alamat,
-                businessUnit: values.businessUnit,
+                address: values.alamat,
+                businessUnitId: values.businessUnit,
                 email: values.email,
                 hp: values.phone,
-                name: values.name
+                name: values.name,
+                birthDate: dateDefault(values.dateOfBirth),
+                id: id,
+                roleId: values.role,
+                registrationInfoId: 0,
             }
             const head = {
                 headers: {
@@ -65,7 +100,7 @@ const AddUser = () => {
                 } else {
                     setStatus(true);
                     setSeverity('success')
-                    setMessage('Berhasil mendaftarkan User')
+                    setMessage('Berhasil Edit User')
                     setTimeout(() => {        
                         router.push("/admin/user")
                     }, 200);
@@ -79,22 +114,23 @@ const AddUser = () => {
 
     return(
         <Fragment>
-            <Head title="Tambah User - E-DESA"/>
+            <Head title="Edit User - E-DESA"/>
             <Navbar/>
             <div className="d-flex">
                 <Sidebar/>
                 <div id="page-content-wrapper">
                     <div id="content">
-                        <div className="heading-2">Tambah User</div>
+                        <div className="heading-2">Edit User</div>
                         <form onSubmit={formik.handleSubmit}>
                             <Grid container spacing={2}>
                                 <Grid item md={6} sm={6} xs={12}>
                                     <div className="form-group m-t-10">
                                         <label className="font-bold">Role<span className="text-danger">*</span></label>
-                                        <select className="form-control form-swantik" value={formik.values.role} onChange={(e) => formik.setFieldValue('role', e.target.value)}>
+                                        <select className="form-control form-swantik" value={formik.values.role} onChange={(e) => formik.setFieldValue('role', e.target.selected)}>
                                             <option value="">--Pilih Role--</option>
-                                            <option value="1">Admin</option>
-                                            <option value="2">Perangkat Desa</option>
+                                            <option value={1}>Admin</option>
+                                            <option value={2}>Perangkat Desa</option>
+                                            <option value={3}>Warga</option>
                                         </select>
                                         {formik.errors.role && formik.touched.role ?
                                             <div className="text-danger text-sm ">{formik.errors.role}</div> : null
@@ -128,12 +164,20 @@ const AddUser = () => {
                                         }
                                     </div>
                                 </Grid>
-                                <Grid item md={6} sm={6} xs={12}>
-                                    <div className="form-group m-t-10">
-                                        <label className="font-bold">Email<span className="text-danger">*</span></label>
-                                        <input className="form-control form-swantik" placeholder="Masukkan email" value={formik.values.email} onChange={(e) => formik.setFieldValue('email', e.target.value)}/>
-                                        {formik.errors.email && formik.touched.email ?
-                                            <div className="text-danger text-sm ">{formik.errors.email}</div> : null
+                                <Grid item md={6} sm={12} xs={12}>
+                                    <div className="form-group">
+                                        <label className="font-semibold">Tanggal Lahir</label>
+                                        <DatePicker
+                                            selected={formik.values.dateOfBirth}
+                                            onChange={(date) => formik.setFieldValue('dateOfBirth', date)}
+                                            dateFormat="dd/MM/yyyy"
+                                            className="form-control form-swantik"
+                                            showYearDropdown
+                                            yearDropdownItemNumber={50}
+                                            scrollableYearDropdown
+                                        />
+                                        {formik.errors.dateOfBirth && formik.touched.dateOfBirth ?
+                                            <div className="text-sm text-danger">{formik.errors.dateOfBirth}</div>:null
                                         }
                                     </div>
                                 </Grid>
@@ -167,4 +211,4 @@ const AddUser = () => {
         </Fragment>
     )
 }
-export default AddUser;
+export default EditUser;

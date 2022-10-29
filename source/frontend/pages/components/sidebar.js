@@ -12,14 +12,14 @@ const Sidebar = () => {
         <div className="border-right view-more-991" id="sidebar-wrapper">
             <div className="list-group list-group-flush">
                 <Link href="/admin/dashboard">
-                    <a href="#" className={`list-group-item list-group-item-action ${navActive('/admin/dashboard')}`}>
+                    <a className={`list-group-item list-group-item-action ${navActive('/admin/dashboard')}`}>
                         Dashboard
                     </a>
                 </Link>
                 {/* warga */}
                 {user?.user?.roleId === 3 &&
                     <Link href="/admin/pelaporan">
-                        <a href="#" className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
+                        <a className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
                             Pengaduan
                         </a>
                     </Link>
@@ -27,7 +27,7 @@ const Sidebar = () => {
                 {/* perangkat desa */}
                 {user?.user?.roleId === 2 &&
                     <Link href="/admin/pelaporan">
-                        <a href="#" className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
+                        <a className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
                             Pengaduan
                         </a>
                     </Link>
@@ -36,12 +36,12 @@ const Sidebar = () => {
                 {/* {user?.user?.roleId === 1 && */}
                     <>
                         <Link href="/admin/user">
-                            <a href="#" className={`list-group-item list-group-item-action ${navActive('/admin/user') || navActive('/admin/add_user')}`}>
+                            <a className={`list-group-item list-group-item-action ${navActive('/admin/user') || navActive('/admin/add_user')}`}>
                                 Manajemen User
                             </a>
                         </Link>
                         <Link href="/admin/pelaporan">
-                            <a href="#" className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
+                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
                                 Pengaduan
                             </a>
                         </Link>
