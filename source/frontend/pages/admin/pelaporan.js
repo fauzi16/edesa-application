@@ -9,21 +9,18 @@ import axios from 'axios';
 import UserContext from '../../utils/UserContext';
 import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import EditIcon from '@mui/icons-material/Edit';
+import { useRouter } from 'next/router'
+import {
+    DataGridPro,
+    GridActionsCellItem,
+  } from '@mui/x-data-grid-pro';
 const Pelaporan = () => {
-    const user = useContext(UserContext);
-    const [message, setMessage] = useState('');
-    const [name, setName] = useState('');
-    const [role, setRole] = useState('');
-    const [status, setStatus] = useState('');
-    const [admin, setAdmin] = useState([]);
-    const [customer, setCustomer] = useState([]);
-    const [merchants, setmerchants] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [data, setData] = useState(null);
-    const getUsers = () => {
-        const url = `http://localhost:8080/users`;
+    const [issues, setIssues] = useState([]);
+    const router = useRouter();
+    
+    const getIssues = () => {
+        const url = `http://localhost:8080/issues`;
         const head = {
             headers: {
                 'Authorization': `Bearer ${cookie.get(TOKEN)}`
@@ -31,7 +28,7 @@ const Pelaporan = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            setAdmin(resp.data)
+            setIssues(resp.data)
             console.log(resp.data)
         }).catch(err => {
             console.log('err', err)
@@ -40,16 +37,26 @@ const Pelaporan = () => {
 
 
     useEffect(()=>{
-        getUsers();
+        getIssues();
     },[])
 
     const columns = [
-        { field: 'username', headerName: 'Username', width: 250  },
-        { headerName: 'Nama - Nomor HP - Role', valueGetter: (params) => `${params.row.userInfo?.name} - ${params.row.userInfo?.hp} - ${params.row.userInfo?.role?.name}`, width: 600 },
+        { field: 'coordinate', headerName: 'Koordinat', width: 250  },
+        { field: 'description', headerName: 'Deskripsi', width: 500  },
+        { field: 'status', headerName: 'Status', width: 100  },
+        {
+            field: 'actions',
+            type: 'actions',
+            width: 100,
+            headerName: 'Aksi',
+            getActions: ({id}) => [
+              <GridActionsCellItem icon={<EditIcon />} label="Penugasan" onClick={()=>router.push(`/admin/penugasan?id=${id}`)}/>,
+            ],
+        },
     ];
     return(
         <Fragment>
-            <Head title="Pelaporan - E-DESA"/>
+            <Head title="Manajamen Pengaduan - E-DESA"/>
             <Navbar/>
             <div className="d-flex">
                 <Sidebar/>
@@ -57,23 +64,19 @@ const Pelaporan = () => {
                     <div id="content">
                         <Grid container spacing={2}>
                             <Grid item md={6} xs={12}>
-                                <div className="heading-2">PELAPORAN</div>
+                                <div className="heading-2">PENGADUAN</div>
                             </Grid>
                             <Grid item md={6} xs={12} className="text-right">
-                                {user?.user?.roleId === 3 &&
-                                    <Link href="/admin/add_pelaporan">
-                                        <Button variant="contained" color="primary">TAMBAH PELAPORAN</Button>
-                                    </Link>
-                                }
+                                <Link href="/admin/add_pelaporan">
+                                    <Button variant="contained" color="primary">TAMBAH PENGADUAN</Button>
+                                </Link>
                             </Grid>
                         </Grid>   
                         <br/>
-                        <div style={{ height: 400, width: '100%' }}>
-                            <DataGrid
-                                rows={admin}
+                        <div style={{ height: 600, width: '100%' }}>
+                            <DataGridPro
+                                rows={issues}
                                 columns={columns}
-                                pageSize={10}
-                                rowsPerPageOptions={[5]}
                             />
                         </div>
                         
