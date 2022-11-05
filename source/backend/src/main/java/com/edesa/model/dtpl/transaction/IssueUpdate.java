@@ -19,6 +19,7 @@ public class IssueUpdate {
     private Long updateById;
     private Timestamp updateTime;
     private String status;
+    private String transition;
 
     @Column(columnDefinition="TEXT")
     private String comment;
@@ -71,6 +72,14 @@ public class IssueUpdate {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTransition() {
+        return transition;
+    }
+
+    public void setTransition(String transition) {
+        this.transition = transition;
     }
 
 

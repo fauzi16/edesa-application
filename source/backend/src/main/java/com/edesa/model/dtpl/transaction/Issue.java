@@ -26,6 +26,8 @@ public class Issue {
 
     public final static String STATUS_NEW = "NEW";
     public final static String STATUS_OPEN = "OPEN";
+    public final static String STATUS_INPROGRESS = "INPROGRESS";
+    public final static String STATUS_DONE = "DONE";
     public final static String STATUS_CLOSED = "CLOSED";
     
     @Id
