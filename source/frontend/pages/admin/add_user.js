@@ -43,7 +43,7 @@ const AddUser = () => {
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://localhost:8080/management-user/create/${values.role == '1'? 'admin':'perangkat-desa'}`;
+            const url = `http://103.176.78.92:8080/management-user/create/${values.role == '1'? 'admin':'perangkat-desa'}`;
             const data = {
                 alamat: values.alamat,
                 businessUnit: values.businessUnit,

@@ -37,7 +37,7 @@ const Register = () => {
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = 'http://localhost:8080/registration/warga';
+            const url = 'http://103.176.78.92:8080/registration/warga';
             const data = {
                 alamat: values.address,
                 email: values.email,

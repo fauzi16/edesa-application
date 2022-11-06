@@ -36,9 +36,8 @@ const Index = () => {
                 username: values.email, 
                 password: values.password
             }
-            axios.post('http://localhost:8080/authenticate2', data)
+            axios.post('http://103.176.78.92:8080/authenticate2', data)
                 .then(function (response) {
-                    console.log(response)
                     if (response.status !== 200) {
                         setStatus(true);
                         setSeverity('error');
@@ -57,7 +56,7 @@ const Index = () => {
                         const data =  {
                             email: values.email
                         }
-                        axios.post('http://localhost:8080/userInfos/find-alldata-by-sample', data, head)
+                        axios.post('http://103.176.78.92:8080/userInfos/find-alldata-by-sample', data, head)
                             .then(resp => {
                                 user.setUser(resp.data && resp.data[0])
                                 ls.set('user', resp.data && resp.data[0])

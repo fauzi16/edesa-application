@@ -25,7 +25,7 @@ const EditUser = () => {
     console.log(router)
     const id = router.query.id;
     const getUser = () => {
-        const url = `http://localhost:8080/users/${id}`;
+        const url = `http://103.176.78.92:8080/users/${id}`;
         const head = {
             headers: {
                 'Authorization': `Bearer ${cookie.get(TOKEN)}`
@@ -41,7 +41,6 @@ const EditUser = () => {
     useEffect(()=>{
         getUser();
     },[])
-    console.log(users)
     const schema = Yup.object().shape({
         name: Yup.string().required('Nama perangkat desa wajib diisi'),
         alamat: Yup.string().required('Alamat wajib diisi'),
@@ -67,14 +66,14 @@ const EditUser = () => {
         formik.setFieldValue('name', users?.userInfo?.name)
         formik.setFieldValue('alamat', users?.userInfo?.address)
         formik.setFieldValue('phone', users?.userInfo?.hp)
-        formik.setFieldValue('businessUnit', users?.userInfo?.businessUnit)
+        formik.setFieldValue('businessUnit', users?.userInfo?.businessUnit || '')
         formik.setFieldValue('role', users?.roleId)
     },[users])
     const formik = useFormik({
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://localhost:8080/management-user/edit/user`;
+            const url = `http://103.176.78.92:8080/management-user/edit/user`;
             const data = {
                 address: values.alamat,
                 businessUnitId: values.businessUnit,
@@ -111,7 +110,7 @@ const EditUser = () => {
             });
         },
     });
-
+    console.log({formik})
     return(
         <Fragment>
             <Head title="Edit User - E-DESA"/>
@@ -126,7 +125,7 @@ const EditUser = () => {
                                 <Grid item md={6} sm={6} xs={12}>
                                     <div className="form-group m-t-10">
                                         <label className="font-bold">Role<span className="text-danger">*</span></label>
-                                        <select className="form-control form-swantik" value={formik.values.role} onChange={(e) => formik.setFieldValue('role', e.target.selected)}>
+                                        <select className="form-control form-swantik" value={formik.values.role || ''} onChange={(e) => formik.setFieldValue('role', e.target.value)}>
                                             <option value="">--Pilih Role--</option>
                                             <option value={1}>Admin</option>
                                             <option value={2}>Perangkat Desa</option>
@@ -140,7 +139,7 @@ const EditUser = () => {
                                 <Grid item md={6} sm={6} xs={12}>
                                     <div className="form-group m-t-10">
                                         <label className="font-bold">Nama<span className="text-danger">*</span></label>
-                                        <input className="form-control form-swantik" placeholder="Masukkan nama" value={formik.values.name} onChange={(e) => formik.setFieldValue('name', e.target.value)}/>
+                                        <input className="form-control form-swantik" placeholder="Masukkan nama" value={formik.values.name || ''} onChange={(e) => formik.setFieldValue('name', e.target.value)}/>
                                         {formik.errors.name && formik.touched.name ?
                                             <div className="text-danger text-sm ">{formik.errors.name}</div> : null
                                         }
@@ -149,7 +148,7 @@ const EditUser = () => {
                                 <Grid item md={6} sm={6} xs={12}>
                                     <div className="form-group m-t-10">
                                         <label className="font-bold">Alamat<span className="text-danger">*</span></label>
-                                        <input className="form-control form-swantik" placeholder="Masukkan alamat" value={formik.values.alamat} onChange={(e) => formik.setFieldValue('alamat', e.target.value)}/>
+                                        <input className="form-control form-swantik" placeholder="Masukkan alamat" value={formik.values.alamat || ''} onChange={(e) => formik.setFieldValue('alamat', e.target.value)}/>
                                         {formik.errors.alamat && formik.touched.alamat ?
                                             <div className="text-danger text-sm ">{formik.errors.alamat}</div> : null
                                         }
@@ -158,7 +157,7 @@ const EditUser = () => {
                                 <Grid item md={6} sm={6} xs={12}>
                                     <div className="form-group m-t-10">
                                         <label className="font-bold">Nomor HP<span className="text-danger">*</span></label>
-                                        <input className="form-control form-swantik" placeholder="Masukkan nomor HP" value={formik.values.phone} onChange={(e) => formik.setFieldValue('phone', e.target.value)}/>
+                                        <input className="form-control form-swantik" placeholder="Masukkan nomor HP" value={formik.values.phone || ''} onChange={(e) => formik.setFieldValue('phone', e.target.value)}/>
                                         {formik.errors.phone && formik.touched.phone ?
                                             <div className="text-danger text-sm ">{formik.errors.phone}</div> : null
                                         }
@@ -168,7 +167,7 @@ const EditUser = () => {
                                     <div className="form-group">
                                         <label className="font-semibold">Tanggal Lahir</label>
                                         <DatePicker
-                                            selected={formik.values.dateOfBirth}
+                                            selected={formik.values.dateOfBirth || ''}
                                             onChange={(date) => formik.setFieldValue('dateOfBirth', date)}
                                             dateFormat="dd/MM/yyyy"
                                             className="form-control form-swantik"
@@ -185,7 +184,7 @@ const EditUser = () => {
                                     <Grid item md={6} sm={6} xs={12}>
                                         <div className="form-group m-t-10">
                                             <label className="font-bold">Divisi<span className="text-danger">*</span></label>
-                                            <select className="form-control form-swantik" value={formik.values.businessUnit} onChange={(e) => formik.setFieldValue('businessUnit', e.target.value)}>
+                                            <select className="form-control form-swantik" value={formik.values.businessUnit || ''} onChange={(e) => formik.setFieldValue('businessUnit', e.target.value)}>
                                                 <option value="1">Unit Kesejahteraan dan Pelayanan</option>
                                                 <option value="2">Unit Keamanan dan ketertiban</option>
                                                 <option value="3">Unit Pemerintahan</option>

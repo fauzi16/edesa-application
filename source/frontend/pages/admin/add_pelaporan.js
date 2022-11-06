@@ -35,6 +35,7 @@ const AddPelaporan = () => {
     const [status, setStatus] = useState(false);
     const [severity, setSeverity] = useState('');
     const [message, setMessage] = useState('');
+    const [id, setId] = useState('');
     const [mapPosition, setMapPosition] = useState({
         lat: -6.586987,
         lng: 106.7994842
@@ -56,15 +57,33 @@ const AddPelaporan = () => {
         address: '',
         city:'',
     };
+    useEffect(()=>{
+        const url = `http://103.176.78.92:8080/users/find-by-username`;
+        const data = {
+            username:user?.user?.email
+        }
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.post(url, data, head)
+        .then(function (response) {
+            setId(response.data)
+        })
+        .catch(function (error) {
+            console.log(error)
+        });
+    },[user?.user?.email])
     const formik = useFormik({
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://localhost:8080/issue/step1-buat-laporan-oleh-warga`;
+            const url = `http://103.176.78.92:8080/issue/step1-buat-laporan-oleh-warga`;
             const data = {
                 coordinate:`${values.lat},${values.lng}`,
                 description: values.description,
-                reporterId: user?.user?.id
+                reporterId: id.id
             }
             const head = {
                 headers: {
@@ -82,7 +101,7 @@ const AddPelaporan = () => {
                     setSeverity('success')
                     setMessage('Berhasil menambah pelaporan')
                     setTimeout(() => {        
-                        router.push("/admin/pelaporan")
+                        router.push("/admin/pelaporan_warga")
                     }, 200);
                 }
             })
@@ -112,7 +131,7 @@ const AddPelaporan = () => {
             }
         );
     }
-    console.log(formik)
+
     return(
         <Fragment>
             <Head title="Tambah Pengaduan - E-DESA"/>
@@ -127,7 +146,7 @@ const AddPelaporan = () => {
                                 <Grid item md={12} sm={12} xs={12}>
                                     <div className="form-group m-t-10">
                                         <label className="font-bold">Deskripsi Pengaduan<span className="text-danger">*</span></label>
-                                        <textarea className="form-control form-swantik" rows={4} value={formik.values.description} onChange={(e)=> formik.setFieldValue('description', e.target.value)}></textarea>
+                                        <textarea name="textarea" className="form-control form-swantik" rows="4" value={formik.values.description} onChange={(e)=> formik.setFieldValue('description', e.target.value)}></textarea>
                                         {formik.errors.description && formik.touched.description ?
                                             <div className="text-danger text-sm ">{formik.errors.description}</div> : null
                                         }
@@ -171,6 +190,7 @@ const AddPelaporan = () => {
                                             }}
                                         />
                                         {formik.errors.city && formik.touched.city ? <div className="text-danger text-sm">{formik.errors.city}</div>:null}
+                                        <br/>
                                         <MyMapComponent
                                             googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCad6Maqp-rBaiOP5rimmtrV4tkapJCppA"
                                             loadingElement={<div style={loadingElementStyle} />}

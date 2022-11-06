@@ -19,8 +19,8 @@ const Sidebar = () => {
                 {/* warga */}
                 {user?.user?.roleId === 3 &&
                     <>
-                        <Link href="/admin/pelaporan">
-                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
+                        <Link href="/admin/pelaporan_warga">
+                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pelaporan_warga') || navActive('/admin/add_pengaduan')}`}>
                                 Pengaduan
                             </a>
                         </Link>
@@ -29,8 +29,8 @@ const Sidebar = () => {
                 {/* perangkat desa */}
                 {user?.user?.roleId === 2 &&
                     <>
-                        <Link href="/admin/pelaporan">
-                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
+                        <Link href="/admin/pelaporan_perangkat">
+                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pelaporan_perangkat') || navActive('/admin/penugasan_perangkat')}`}>
                                 Pengaduan
                             </a>
                         </Link>
@@ -49,8 +49,8 @@ const Sidebar = () => {
                                 Manajemen User
                             </a>
                         </Link>
-                        <Link href="/admin/pelaporan">
-                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pengaduan') || navActive('/admin/add_pengaduan')}`}>
+                        <Link href="/admin/pelaporan_admin">
+                            <a className={`list-group-item list-group-item-action ${navActive('/admin/pelaporan_admin') || navActive('/admin/penugasan')}`}>
                                 Pengaduan
                             </a>
                         </Link>

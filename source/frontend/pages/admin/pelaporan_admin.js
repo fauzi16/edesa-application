@@ -6,18 +6,21 @@ import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
 import Link from 'next/link';
 import axios from 'axios';
+import UserContext from '../../utils/UserContext';
 import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
 import EditIcon from '@mui/icons-material/Edit';
 import { useRouter } from 'next/router'
 import DataTable from 'react-data-table-component';
 import {orderBy} from 'lodash';
-const User = () => {
-    const [admin, setAdmin] = useState([]);
+const PelaporanAdmin = () => {
+    const [issues, setIssues] = useState([]);
     const router = useRouter();
+    const user = useContext(UserContext)
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-    const getUsers = () => {
-        const url = `http://103.176.78.92:8080/users`;
+
+    const getIssues = () => {
+        const url = `http://103.176.78.92:8080/issues`;
         const head = {
             headers: {
                 'Authorization': `Bearer ${cookie.get(TOKEN)}`
@@ -25,11 +28,7 @@ const User = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            let data = [];
-            resp.data.filter((a)=>a.username !== null).map((d)=>
-                data.push(d.userInfo)
-            )
-            setAdmin(data)
+            setIssues(resp.data)
         }).catch(err => {
             console.log('err', err)
         });  
@@ -37,43 +36,31 @@ const User = () => {
 
 
     useEffect(()=>{
-        getUsers();
+        getIssues();
     },[])
 
     const columns = [
         {
-            name:'Username',
+            name:'Koordinat',
             sortable:true,
-            selector: 'email',
-            width:'250px'   
+            selector: 'coordinate',
         },
         {
-            name:'Nama',
+            name:'Deskripsi',
             sortable:true,
-            selector: 'name',
-            width:'250px'   
+            selector: 'description',
         },
         {
-            name:'Nomor HP',
+            name:'Status',
             sortable:true,
-            selector: 'hp',
-            width:'250px'   
-        },
-        {
-            name: 'Role',
-            sortable: true,
-            width: '100px',
-            cell: (row,index) => {return <div key={index}>
-              {row.roleId == 1 ? 'Admin' : row.roleId == 2 ? 'Perangkat Desa' : 'Warga'}
-            </div>
-            },
+            selector: 'status',
         },
         {
             name: 'Aksi',
             sortable: false,
             width: '100px',
             cell: (row,index) => {return <div key={index}>
-              <a onClick={()=>router.push(`/admin/edit_user?id=${row.id}`)}><EditIcon/></a>
+              <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>
             </div>
             },
         },
@@ -114,10 +101,9 @@ const User = () => {
             },
         },
     };
-
     return(
         <Fragment>
-            <Head title="Manajamen User - E-DESA"/>
+            <Head title="Manajamen Pengaduan - E-DESA"/>
             <Navbar/>
             <div className="d-flex">
                 <Sidebar/>
@@ -125,18 +111,13 @@ const User = () => {
                     <div id="content">
                         <Grid container spacing={2}>
                             <Grid item md={6} xs={12}>
-                                <div className="heading-2">MANAJEMEN USER</div>
-                            </Grid>
-                            <Grid item md={6} xs={12} className="text-right">
-                                <Link href="/admin/add_user">
-                                    <Button variant="contained" color="primary">TAMBAH USER</Button>
-                                </Link>
+                                <div className="heading-2">PENGADUAN</div>
                             </Grid>
                         </Grid>   
                         <br/>
                         <div style={{ height: 600, width: '100%' }}>
                             <DataTable
-                                data={admin}
+                                data={issues}
                                 columns={columns}
                                 pagination
                                 paginationResetDefaultPage={resetPaginationToggle}
@@ -152,4 +133,4 @@ const User = () => {
         </Fragment>
     )
 }
-export default User;
+export default PelaporanAdmin;
