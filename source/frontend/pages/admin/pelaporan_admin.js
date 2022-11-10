@@ -28,6 +28,7 @@ const PelaporanAdmin = () => {
         }
         axios.get(url, head)
         .then(resp => {
+            console.log(resp.data)
             setIssues(resp.data)
         }).catch(err => {
             console.log('err', err)
@@ -54,6 +55,14 @@ const PelaporanAdmin = () => {
             name:'Status',
             sortable:true,
             selector: 'status',
+        },
+        {
+            name:'Ditugaskan ke',
+            sortable:false,
+            cell: (row,index) => {return <div key={index}>
+              {row.assigneeInfo !== null && <div>{row.assigneeInfo?.userInfo?.name}</div>}
+            </div>
+            },
         },
         {
             name: 'Aksi',

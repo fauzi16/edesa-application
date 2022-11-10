@@ -22,8 +22,29 @@ const Penugasan = () => {
     const [severity, setSeverity] = useState('');
     const [message, setMessage] = useState('');
     const [business, setBusiness] = useState([]);
-    console.log(router)
+    const [residence, setResidence] = useState([]);
+    const [idAdmin, setIdAdmin] = useState('');
+
     const id = router.query.id;
+
+    useEffect(()=>{
+        const url = `http://103.176.78.92:8080/users/find-by-username`;
+        const data = {
+            username:user?.user?.email
+        }
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.post(url, data, head)
+        .then(function (response) {
+            setIdAdmin(response.data)
+        })
+        .catch(function (error) {
+            console.log(error)
+        });
+    },[user?.user?.email])
 
     const getBusiness = () => {
         const url = `http://103.176.78.92:8080/businessUnits`;
@@ -49,7 +70,7 @@ const Penugasan = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            console.log(resp.data)
+            setResidence(resp.data)
         }).catch(err => {
             console.log('err', err)
         });  
@@ -61,6 +82,7 @@ const Penugasan = () => {
 
     const schema = Yup.object().shape({
         businessId: Yup.string().required('Perangkat desa wajib diisi'),
+        residenceId: Yup.string().required('Residence wajib diisi'),
     });
     const initialValues = {
         businessId: 0,
@@ -73,7 +95,7 @@ const Penugasan = () => {
         onSubmit: async (values, action) => {
             const url = `http://103.176.78.92:8080/issue/step2-penugasan-laporan-oleh-admin`;
             const data ={
-                adminId: 10012,
+                adminId: idAdmin.id,
                 businessUnitId: values.businessId,
                 issueId: id,
                 residenceId: values.residenceId,
@@ -92,9 +114,9 @@ const Penugasan = () => {
                 } else {
                     setStatus(true);
                     setSeverity('success')
-                    setMessage('Berhasil Edit User')
+                    setMessage('Berhasil Menugaskan Pengaduan')
                     setTimeout(() => {        
-                        router.push("/admin/user")
+                        router.push("/admin/pelaporan_admin")
                     }, 200);
                 }
             })
@@ -126,6 +148,18 @@ const Penugasan = () => {
                                         </select>
                                         {formik.errors.businessId && formik.touched.businessId ?
                                             <div className="text-danger text-sm ">{formik.errors.businessId}</div> : null
+                                        }
+                                    </div>
+                                    <div className="form-group m-t-10">
+                                        <label className="font-bold">Residence<span className="text-danger">*</span></label>
+                                        <select className="form-control form-swantik" value={formik.values.residenceId} onChange={(e) => formik.setFieldValue('residenceId', e.target.value)}>
+                                            <option value="">--Pilih Residence--</option>
+                                            {residence?.map((data, index)=>
+                                                <option key={index} value={data.id}>{data.name}</option>
+                                            )}
+                                        </select>
+                                        {formik.errors.residenceId && formik.touched.residenceId ?
+                                            <div className="text-danger text-sm ">{formik.errors.residenceId}</div> : null
                                         }
                                     </div>
                                 </Grid>

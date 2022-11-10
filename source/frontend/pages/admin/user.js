@@ -25,8 +25,9 @@ const User = () => {
         }
         axios.get(url, head)
         .then(resp => {
+            console.log(resp)
             let data = [];
-            resp.data.filter((a)=>a.username !== null).map((d)=>
+            resp.data.filter((a)=>a.userInfo !== null).map((d)=>
                 data.push(d.userInfo)
             )
             setAdmin(data)
@@ -62,7 +63,7 @@ const User = () => {
         {
             name: 'Role',
             sortable: true,
-            width: '100px',
+            width: '200px',
             cell: (row,index) => {return <div key={index}>
               {row.roleId == 1 ? 'Admin' : row.roleId == 2 ? 'Perangkat Desa' : 'Warga'}
             </div>

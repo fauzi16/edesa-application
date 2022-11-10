@@ -78,15 +78,15 @@ const Pelaporan = () => {
             sortable:true,
             selector: 'status',
         },
-        {
-            name: 'Aksi',
-            sortable: false,
-            width: '100px',
-            cell: (row,index) => {return <div key={index}>
-              <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>
-            </div>
-            },
-        },
+        // {
+        //     name: 'Aksi',
+        //     sortable: false,
+        //     width: '100px',
+        //     cell: (row,index) => {return <div key={index}>
+        //       <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>
+        //     </div>
+        //     },
+        // },
     ];
     const customSort = (rows, field, direction) => {
         const handleField = row => {
