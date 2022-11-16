@@ -73,7 +73,7 @@ const Dashboard = () => {
         description: '',
         residenceId: 0,
     };
-    console.log(idAdmin)
+
     const formik = useFormik({
         initialValues,
         validationSchema: schema,

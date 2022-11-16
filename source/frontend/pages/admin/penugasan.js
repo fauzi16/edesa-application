@@ -11,7 +11,7 @@ import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
-
+import { first } from 'lodash';
 const Penugasan = () => {
     const user = useContext(UserContext);
     const router = useRouter();
@@ -21,7 +21,7 @@ const Penugasan = () => {
     const [business, setBusiness] = useState([]);
     const [residence, setResidence] = useState([]);
     const [idAdmin, setIdAdmin] = useState('');
-
+    const [users, setUsers] = useState({});
     const id = router.query.id;
 
     useEffect(()=>{
@@ -72,11 +72,30 @@ const Penugasan = () => {
             console.log('err', err)
         });  
     }
+    const getUser = () => {
+        const url = `http://103.176.78.92:8080/users`;
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.get(url, head)
+        .then(resp => {
+            let data = [];
+            resp.data.filter((a)=>a.userInfoId == id).map((d)=>
+                data.push(d)
+            )
+            setUsers(data)
+        }).catch(err => {
+            console.log('err', err)
+        });  
+    }
     useEffect(()=>{
         getBusiness();
         getResidence();
+        getUser();
     },[])
-
+    
     const schema = Yup.object().shape({
         businessId: Yup.string().required('Perangkat desa wajib diisi'),
         residenceId: Yup.string().required('Residence wajib diisi'),
@@ -85,7 +104,7 @@ const Penugasan = () => {
         businessId: 0,
         residenceId:0,
     };
-    
+
     const formik = useFormik({
         initialValues,
         validationSchema: schema,
@@ -94,7 +113,7 @@ const Penugasan = () => {
             const data ={
                 adminId: idAdmin.id,
                 businessUnitId: values.businessId,
-                issueId: id,
+                issueId: first(users)?.userInfoId,
                 residenceId: values.residenceId,
             }
             const head = {

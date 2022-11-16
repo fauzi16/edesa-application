@@ -4,7 +4,6 @@ import Head from '../components/head';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import Sidebar from '../components/sidebar';
-import Link from 'next/link';
 import axios from 'axios';
 import UserContext from '../../utils/UserContext';
 import { cookie } from '../../utils/global';
@@ -15,6 +14,7 @@ import { useRouter } from 'next/router'
 import DataTable from 'react-data-table-component';
 import {orderBy} from 'lodash';
 import {dateTimeFormat} from '../../utils/helpers';
+import BlindsClosedIcon from '@mui/icons-material/BlindsClosed';
 const PelaporanAdmin = () => {
     const [issues, setIssues] = useState([]);
     const router = useRouter();
@@ -22,6 +22,8 @@ const PelaporanAdmin = () => {
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const [open, setOpen] = useState(false);
     const [pengaduan, setPengaduan] = useState({});
+    const [idIssue, setIdIssue] = useState(null);
+    const [openClosed, setOpenClosed] = useState(false);
     const style = {
         position: 'absolute',
         left: '50%',
@@ -79,7 +81,7 @@ const PelaporanAdmin = () => {
         {
             name: 'Aksi',
             sortable: false,
-            width: '100px',
+            width: '150px',
             cell: (row,index) => {return <div key={index}>
                 <a 
                     onClick={()=>{
@@ -90,6 +92,16 @@ const PelaporanAdmin = () => {
                     <VisibilityIcon/>
                 </a>
                 {row.status !== 'CLOSED' && <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>}
+                {row.status !== 'CLOSED' && 
+                    <a
+                        onClick={()=>{
+                            setIdIssue(row.id)
+                            setOpenClosed(true)
+                        }}
+                    >
+                        <BlindsClosedIcon/>
+                    </a>
+                }
             </div>
             },
         },
@@ -130,6 +142,30 @@ const PelaporanAdmin = () => {
             },
         },
     };
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const url = `http://103.176.78.92:8080/issue/step5-close-laporan-oleh-admin`;
+            const data ={
+                issueId: Number(idIssue)
+            }
+            const head = {
+                headers: {
+                    'Authorization': `Bearer ${cookie.get(TOKEN)}`
+                }
+            }
+            axios.post(url, data, head)
+            .then(function (response) {
+                if (response.status !== 200) {
+                    setOpenClosed(false);
+                } else {
+                    setOpenClosed(false);
+                    router.push("/admin/pelaporan_warga")
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
+            });
+    }
     return(
         <Fragment>
             <Head title="Manajamen Pengaduan - E-DESA"/>
@@ -215,6 +251,22 @@ const PelaporanAdmin = () => {
                                     </tr>
                                 </tbody>
                             </table>
+                        </Paper>
+                    </Modal>
+                    <Modal
+                        open={openClosed}
+                        onClose={()=> setOpenClosed(false)}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Paper sx={style}>
+                            <h3>Tutup Pengaduan</h3>
+                            <hr/>
+                            <form onSubmit={(e)=>onSubmit(e)}>
+                                Anda yakin ingin menutup pengaduan ini?
+                                <br/>
+                                <Button variant="outlined" color="primary" type="submit">Ya, yakin</Button>
+                            </form>
                         </Paper>
                     </Modal>
                 </div>
