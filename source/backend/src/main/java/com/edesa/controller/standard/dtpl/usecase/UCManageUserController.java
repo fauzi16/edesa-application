@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.edesa.controller.standard.dtpl.BaseController;
+import com.edesa.controller.standard.dtpl.usecase.model.EditUserInfo;
+import com.edesa.controller.standard.dtpl.usecase.model.SetActivationInfo;
 import com.edesa.controller.standard.dtpl.usecase.model.UserAdminInfo;
 import com.edesa.controller.standard.dtpl.usecase.model.UserPerangkatDesaInfo;
 import com.edesa.model.dtpl.master.User;
-import com.edesa.model.dtpl.master.UserInfo;
 import com.edesa.service.dtpl.usecase.UCManageUserService;
 
 
@@ -35,13 +36,13 @@ public class UCManageUserController extends BaseController {
     }
 
     @RequestMapping(value = "/edit/user", method = RequestMethod.POST)
-    public User editUser(String username, @RequestBody UserInfo payloadUserInfo) {
-        return service.editUser(username, payloadUserInfo);
+    public User editUser(@RequestBody EditUserInfo payloadUserInfo) {
+        return service.editUser(payloadUserInfo.getUsername(), payloadUserInfo.getUserInfo());
     }
 
     @RequestMapping(value = "/status/user", method = RequestMethod.POST)
-    public User activateOrInactivateUser(String username, boolean isActive) {
-        return service.activateOrInactivateUser(username, isActive);
+    public User activateOrInactivateUser(@RequestBody SetActivationInfo setActivationInfo) {
+        return service.activateOrInactivateUser(setActivationInfo.getUsername(), setActivationInfo.isActivate());
     }
 
 }
