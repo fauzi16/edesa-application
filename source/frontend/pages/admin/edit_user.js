@@ -14,7 +14,7 @@ import {useFormik} from 'formik';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import {dateDefault} from '../../utils/helpers';
-
+import { first } from 'lodash';
 const EditUser = () => {
     const user = useContext(UserContext);
     const router = useRouter();
@@ -57,10 +57,9 @@ const EditUser = () => {
         getBusiness();
         getResidence();
     },[])
-    console.log(router)
     const id = router.query.id;
     const getUser = () => {
-        const url = `http://103.176.78.92:8080/users/${id}`;
+        const url = `http://103.176.78.92:8080/users`;
         const head = {
             headers: {
                 'Authorization': `Bearer ${cookie.get(TOKEN)}`
@@ -68,7 +67,11 @@ const EditUser = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            setUsers(resp.data)
+            let data = [];
+            resp.data.filter((a)=>a.userInfoId == id).map((d)=>
+                data.push(d)
+            )
+            setUsers(data)
         }).catch(err => {
             console.log('err', err)
         });  
@@ -95,28 +98,31 @@ const EditUser = () => {
         residenceId:'',
     };
     useEffect(()=>{
-        formik.setFieldValue('name', users?.userInfo?.name)
-        formik.setFieldValue('alamat', users?.userInfo?.address)
-        formik.setFieldValue('phone', users?.userInfo?.hp)
-        formik.setFieldValue('businessUnit', users?.userInfo?.businessUnit || '')
-        formik.setFieldValue('role', users?.userInfo?.roleId)
+        formik.setFieldValue('name', first(users)?.userInfo?.name || '')
+        formik.setFieldValue('alamat', first(users)?.userInfo?.address || '')
+        formik.setFieldValue('phone', first(users)?.userInfo?.hp || '')
+        formik.setFieldValue('businessId', first(users)?.userInfo?.businessUnitId || '')
+        formik.setFieldValue('role', first(users)?.userInfo?.roleId || '')
+        formik.setFieldValue('residenceId', first(users)?.userInfo?.residenceId || '')
     },[users])
+
     const formik = useFormik({
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://103.176.78.92:8080/management-user/edit/user?username=${users?.userInfo?.email}`;
+            const url = `http://103.176.78.92:8080/management-user/edit/user`;
             const data = {
-                address: values.alamat,
-                birthDate: dateDefault(values.dateOfBirth),
-                businessUnitId: values.businessId,
-                email: users?.userInfo?.email,
-                hp: values.phone,
-                id: id,
-                name: values.name,
-                registrationInfoId: 0,
-                residenceId: values.residenceId,
-                roleId: values.role,
+                userInfo: {
+                    address: values.alamat,
+                    birthDate: dateDefault(values.dateOfBirth),
+                    businessUnitId: Number(values.businessId),
+                    email: first(users)?.userInfo?.email,
+                    hp: values.phone,
+                    name: values.name,
+                    residenceId: Number(values.residenceId),
+                    roleId: values.role,
+                },
+                username: first(users)?.userInfo?.email
             }
             const head = {
                 headers: {
@@ -143,7 +149,6 @@ const EditUser = () => {
             });
         },
     });
-    console.log({formik})
     return(
         <Fragment>
             <Head title="Edit User - E-DESA"/>
@@ -213,7 +218,7 @@ const EditUser = () => {
                                         }
                                     </div>
                                 </Grid>
-                                {formik.values.role === '2' &&
+                                {formik.values.role == 2 &&
                                     <Grid item md={6} sm={6} xs={12}>
                                         <div className="form-group m-t-10">
                                             <label className="font-bold">Divisi<span className="text-danger">*</span></label>

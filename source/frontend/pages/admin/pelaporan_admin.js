@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, Fragment} from 'react';
-import {Grid, Button} from '@mui/material';
+import {Grid, Button, Modal, Paper} from '@mui/material';
 import Head from '../components/head';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
@@ -10,15 +10,28 @@ import UserContext from '../../utils/UserContext';
 import { cookie } from '../../utils/global';
 import { TOKEN } from '../../utils/constant';
 import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useRouter } from 'next/router'
 import DataTable from 'react-data-table-component';
 import {orderBy} from 'lodash';
+import {dateTimeFormat} from '../../utils/helpers';
 const PelaporanAdmin = () => {
     const [issues, setIssues] = useState([]);
     const router = useRouter();
     const user = useContext(UserContext)
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-
+    const [open, setOpen] = useState(false);
+    const [pengaduan, setPengaduan] = useState({});
+    const style = {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 800,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+    };
     const getIssues = () => {
         const url = `http://103.176.78.92:8080/issues`;
         const head = {
@@ -28,7 +41,6 @@ const PelaporanAdmin = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            console.log(resp.data)
             setIssues(resp.data)
         }).catch(err => {
             console.log('err', err)
@@ -69,7 +81,15 @@ const PelaporanAdmin = () => {
             sortable: false,
             width: '100px',
             cell: (row,index) => {return <div key={index}>
-              <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>
+                <a 
+                    onClick={()=>{
+                        setOpen(true)
+                        setPengaduan(row)
+                    }}
+                >
+                    <VisibilityIcon/>
+                </a>
+                {row.status !== 'CLOSED' && <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>}
             </div>
             },
         },
@@ -137,6 +157,66 @@ const PelaporanAdmin = () => {
                         
                     </div>
                     <Footer/>
+                    <Modal
+                        open={open}
+                        onClose={()=> setOpen(false)}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Paper sx={style}>
+                            <h3>Detail Pengaduan</h3>
+                            <hr/>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td width={100}>Deskripsi</td>
+                                        <td width={20}>:</td>
+                                        <td>{pengaduan?.description}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Waktu dibuat</td>
+                                        <td>:</td>
+                                        <td>{dateTimeFormat(pengaduan?.createdTime)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Diassign ke</td>
+                                        <td>:</td>
+                                        <td>{pengaduan?.assigneeInfo !== null ? pengaduan?.assigneeInfo?.userInfo?.name : '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td valign='top'>History</td>
+                                        <td valign='top'>:</td>
+                                        <td>
+                                            {pengaduan?.issueUpdates?.map((data,i)=>
+                                                <div key={i}>
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Status terbaru</td>
+                                                                <td>:</td>
+                                                                <td><b>{data.transition ? data.transition : data.status}</b></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Waktu Update</td>
+                                                                <td>:</td>
+                                                                <td>{dateTimeFormat(data.updateTime)}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Komentar</td>
+                                                                <td>:</td>
+                                                                <td>{data.comment}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <hr/>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </Paper>
+                    </Modal>
                 </div>
             </div>
         </Fragment>

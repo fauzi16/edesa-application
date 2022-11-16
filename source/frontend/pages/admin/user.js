@@ -25,7 +25,6 @@ const User = () => {
         }
         axios.get(url, head)
         .then(resp => {
-            console.log(resp)
             let data = [];
             resp.data.filter((a)=>a.userInfo !== null).map((d)=>
                 data.push(d.userInfo)
@@ -74,7 +73,7 @@ const User = () => {
             sortable: false,
             width: '100px',
             cell: (row,index) => {return <div key={index}>
-              <a onClick={()=>router.push(`/admin/edit_user?id=${row.id}`)}><EditIcon/></a>
+              <a onClick={()=>router.push(`/admin/edit_user?id=${row.id}`)}>{row.id}<EditIcon/></a>
             </div>
             },
         },

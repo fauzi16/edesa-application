@@ -163,7 +163,7 @@ const Pelaporan = () => {
                             </Grid>
                         </Grid>   
                         <br/>
-                        <div style={{ height: 600, width: '100%' }}>
+                        <div style={{ height: 400, width: '100%' }}>
                             <DataTable
                                 data={issues}
                                 columns={columns}
@@ -173,72 +173,70 @@ const Pelaporan = () => {
                                 customStyles={customStyles2}
                             />
                         </div>
-                        
                     </div>
                     <Footer/>
+                    <Modal
+                        open={open}
+                        onClose={()=> setOpen(false)}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Paper sx={style}>
+                            <h3>Detail Pengaduan</h3>
+                            <hr/>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td width={100}>Deskripsi</td>
+                                        <td width={20}>:</td>
+                                        <td>{pengaduan?.description}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Waktu dibuat</td>
+                                        <td>:</td>
+                                        <td>{dateTimeFormat(pengaduan?.createdTime)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Diassign ke</td>
+                                        <td>:</td>
+                                        <td>{pengaduan?.assigneeInfo !== null ? pengaduan?.assigneeInfo?.userInfo?.name : '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td valign='top'>History</td>
+                                        <td valign='top'>:</td>
+                                        <td>
+                                            {pengaduan?.issueUpdates?.map((data,i)=>
+                                                <div key={i}>
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>Status terbaru</td>
+                                                                <td>:</td>
+                                                                <td><b>{data.transition ? data.transition : data.status}</b></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Waktu Update</td>
+                                                                <td>:</td>
+                                                                <td>{dateTimeFormat(data.updateTime)}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Komentar</td>
+                                                                <td>:</td>
+                                                                <td>{data.comment}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <hr/>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </Paper>
+                    </Modal>
                 </div>
             </div>
-            <Modal
-                open={open}
-                onClose={()=> setOpen(false)}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Paper sx={style}>
-                    <h3>Detail Pengaduan</h3>
-                    <hr/>
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td width={100}>Deskripsi</td>
-                                <td width={20}>:</td>
-                                <td>{pengaduan?.description}</td>
-                            </tr>
-                            <tr>
-                                <td>Waktu dibuat</td>
-                                <td>:</td>
-                                <td>{dateTimeFormat(pengaduan?.createdTime)}</td>
-                            </tr>
-                            <tr>
-                                <td>Diassign ke</td>
-                                <td>:</td>
-                                <td>{pengaduan?.assigneeInfo !== null ? pengaduan?.assigneeInfo?.userInfo?.name : '-'}</td>
-                            </tr>
-                            <tr>
-                                <td valign='top'>History</td>
-                                <td valign='top'>:</td>
-                                <td>
-                                    {pengaduan?.issueUpdates?.map((data,i)=>
-                                        <div key={i}>
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Status terbaru</td>
-                                                        <td>:</td>
-                                                        <td><b>{data.transition ? data.transition : data.status}</b></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Waktu Update</td>
-                                                        <td>:</td>
-                                                        <td>{dateTimeFormat(data.updateTime)}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Komentar</td>
-                                                        <td>:</td>
-                                                        <td>{data.comment}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <hr/>
-                                        </div>
-                                    )}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </Paper>
-            </Modal>
-
         </Fragment>
     )
 }

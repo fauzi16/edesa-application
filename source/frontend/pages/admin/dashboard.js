@@ -1,4 +1,5 @@
 import React, {Fragment, useContext, useState, useEffect} from 'react';
+import {useRouter} from 'next/router';
 import Head from '../components/head';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
@@ -18,6 +19,7 @@ const Dashboard = () => {
     const [status, setStatus] = useState(false);
     const [severity, setSeverity] = useState('');
     const [message, setMessage] = useState('');
+    const router = useRouter();
     const style = {
         position: 'absolute',
         left: '50%',
