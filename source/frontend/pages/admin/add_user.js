@@ -17,27 +17,69 @@ const AddUser = () => {
     const [status, setStatus] = useState(false);
     const [severity, setSeverity] = useState('');
     const [message, setMessage] = useState('');
-    const [merchantId, setMerchantId] = useState('');
+    const [business, setBusiness] = useState([]);
+    const [residence, setResidence] = useState([]);
+    const [load, isLoad] = useState(false);
+    const getBusiness = () => {
+        const url = `http://103.176.78.92:8080/businessUnits`;
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.get(url, head)
+        .then(resp => {
+            setBusiness(resp.data)
+        }).catch(err => {
+            console.log('err', err)
+        });  
+    }
+
+    const getResidence = () => {
+        const url = `http://103.176.78.92:8080/residences`;
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.get(url, head)
+        .then(resp => {
+            setResidence(resp.data)
+        }).catch(err => {
+            console.log('err', err)
+        });  
+    }
+    useEffect(()=>{
+        getBusiness();
+        getResidence();
+    },[])
     const schema = Yup.object().shape({
         name: Yup.string().required('Nama perangkat desa wajib diisi'),
         alamat: Yup.string().required('Alamat wajib diisi'),
         phone: Yup.string().required('Nomor HP wajib diisi'),
         email: Yup.string().email('Format email salah').required('Email wajib diisi'),
-        businessUnit: Yup.string()
+        businessId: Yup.string()
         .when('role', {
           is: '2',
           then: Yup.string()
             .required('Divisi wajib diisi'),
         }),
         role: Yup.string().required('Role wajib dipilih'),
+        residenceId: Yup.string().nullable()
+        .when('role', {
+          is: '2',
+          then: Yup.string()
+            .required('Residence wajib diisi'),
+        }),
     });
     const initialValues = {
         name:'',
         alamat:'',
         phone: '',
         email:'',
-        businessUnit:'',
+        businessId:'',
         role:'',
+        residenceId:null,
     };
     const formik = useFormik({
         initialValues,
@@ -46,23 +88,25 @@ const AddUser = () => {
             const url = `http://103.176.78.92:8080/management-user/create/${values.role == '1'? 'admin':'perangkat-desa'}`;
             const data = {
                 alamat: values.alamat,
-                businessUnit: values.businessUnit,
+                businessUnit: values.businessId,
                 email: values.email,
                 hp: values.phone,
                 name: values.name,
-                residenceId: 0,
+                residenceId: values.residenceId,
             }
             const head = {
                 headers: {
                     'Authorization': `Bearer ${cookie.get(TOKEN)}`
                 }
             }
+            isLoad(true)
             axios.post(url, data, head)
             .then(function (response) {
                 if (response.status !== 200) {
                     setStatus(true);
                     setSeverity('error')
                     setMessage('Terjadi kesalahan. Perbaiki isian Anda')
+                    isLoad(false)
                 } else {
                     setStatus(true);
                     setSeverity('success')
@@ -70,6 +114,7 @@ const AddUser = () => {
                     setTimeout(() => {        
                         router.push("/admin/user")
                     }, 200);
+                    isLoad(false)
                 }
             })
             .catch(function (error) {
@@ -77,7 +122,7 @@ const AddUser = () => {
             });
         },
     });
-
+    console.log({formik})
     return(
         <Fragment>
             <Head title="Tambah User - E-DESA"/>
@@ -142,15 +187,26 @@ const AddUser = () => {
                                     <Grid item md={6} sm={6} xs={12}>
                                         <div className="form-group m-t-10">
                                             <label className="font-bold">Divisi<span className="text-danger">*</span></label>
-                                            <select className="form-control form-swantik" value={formik.values.businessUnit} onChange={(e) => formik.setFieldValue('businessUnit', e.target.value)}>
-                                                <option value="">--Pilih Divisi--</option>
-                                                <option value="1">Unit Kesejahteraan dan Pelayanan</option>
-                                                <option value="2">Unit Keamanan dan ketertiban</option>
-                                                <option value="3">Unit Pemerintahan</option>
-                                                <option value="4">Dusun</option>
+                                            <select className="form-control form-swantik" value={formik.values.businessId} onChange={(e) => formik.setFieldValue('businessId', e.target.value)}>
+                                                <option value="">--Pilih Bisnis Unit--</option>
+                                                {business?.map((data, index)=>
+                                                    <option key={index} value={data.id}>{data.name}</option>
+                                                )}
                                             </select>
-                                            {formik.errors.businessUnit && formik.touched.businessUnit ?
-                                                <div className="text-danger text-sm ">{formik.errors.businessUnit}</div> : null
+                                            {formik.errors.businessId && formik.touched.businessId ?
+                                                <div className="text-danger text-sm ">{formik.errors.businessId}</div> : null
+                                            }
+                                        </div>
+                                        <div className="form-group m-t-10">
+                                            <label className="font-bold">Residence<span className="text-danger">*</span></label>
+                                            <select className="form-control form-swantik" value={formik.values.residenceId} onChange={(e) => formik.setFieldValue('residenceId', e.target.value)}>
+                                                <option value="">--Pilih Residence--</option>
+                                                {residence?.map((data, index)=>
+                                                    <option key={index} value={data.id}>{data.name}</option>
+                                                )}
+                                            </select>
+                                            {formik.errors.residenceId && formik.touched.residenceId ?
+                                                <div className="text-danger text-sm ">{formik.errors.residenceId}</div> : null
                                             }
                                         </div>
                                     </Grid>
@@ -159,7 +215,7 @@ const AddUser = () => {
                             <br/>
                             {status && <Alert severity={severity}>{message}</Alert>}
                             <br/>
-                            <Button variant="contained" color="primary" type="submit">Simpan</Button>
+                            <Button variant="contained" color="primary" type="submit" disabled={load}>Simpan</Button>
                             <br/><br/> 
                         </form>        
                     </div>

@@ -22,6 +22,41 @@ const EditUser = () => {
     const [status, setStatus] = useState(false);
     const [severity, setSeverity] = useState('');
     const [message, setMessage] = useState('');
+    const [business, setBusiness] = useState([]);
+    const [residence, setResidence] = useState([]);
+    const getBusiness = () => {
+        const url = `http://103.176.78.92:8080/businessUnits`;
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.get(url, head)
+        .then(resp => {
+            setBusiness(resp.data)
+        }).catch(err => {
+            console.log('err', err)
+        });  
+    }
+
+    const getResidence = () => {
+        const url = `http://103.176.78.92:8080/residences`;
+        const head = {
+            headers: {
+                'Authorization': `Bearer ${cookie.get(TOKEN)}`
+            }
+        }
+        axios.get(url, head)
+        .then(resp => {
+            setResidence(resp.data)
+        }).catch(err => {
+            console.log('err', err)
+        });  
+    }
+    useEffect(()=>{
+        getBusiness();
+        getResidence();
+    },[])
     console.log(router)
     const id = router.query.id;
     const getUser = () => {
@@ -46,44 +81,42 @@ const EditUser = () => {
         alamat: Yup.string().required('Alamat wajib diisi'),
         phone: Yup.string().required('Nomor HP wajib diisi'),
         dateOfBirth: Yup.string().required('Tanggal lahir wajib diisi'),
-        businessUnit: Yup.string()
-        .when('role', {
-          is: '2',
-          then: Yup.string()
-            .required('Divisi wajib diisi'),
-        }),
+        businessId: Yup.string().required('Divisi wajib diisi'),
         role: Yup.string().required('Role wajib dipilih'),
+        residenceId: Yup.string().required('Residence wajib diisi'),
     });
     const initialValues = {
         name: '',
         alamat:'',
         phone: '',
-        businessUnit:'',
+        businessId:'',
         role:'',
         dateOfBirth: new Date(),
+        residenceId:'',
     };
     useEffect(()=>{
         formik.setFieldValue('name', users?.userInfo?.name)
         formik.setFieldValue('alamat', users?.userInfo?.address)
         formik.setFieldValue('phone', users?.userInfo?.hp)
         formik.setFieldValue('businessUnit', users?.userInfo?.businessUnit || '')
-        formik.setFieldValue('role', users?.roleId)
+        formik.setFieldValue('role', users?.userInfo?.roleId)
     },[users])
     const formik = useFormik({
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://103.176.78.92:8080/management-user/edit/user`;
+            const url = `http://103.176.78.92:8080/management-user/edit/user?username=${users?.userInfo?.email}`;
             const data = {
                 address: values.alamat,
-                businessUnitId: values.businessUnit,
-                email: values.email,
-                hp: values.phone,
-                name: values.name,
                 birthDate: dateDefault(values.dateOfBirth),
+                businessUnitId: values.businessId,
+                email: users?.userInfo?.email,
+                hp: values.phone,
                 id: id,
-                roleId: values.role,
+                name: values.name,
                 registrationInfoId: 0,
+                residenceId: values.residenceId,
+                roleId: values.role,
             }
             const head = {
                 headers: {
@@ -184,14 +217,26 @@ const EditUser = () => {
                                     <Grid item md={6} sm={6} xs={12}>
                                         <div className="form-group m-t-10">
                                             <label className="font-bold">Divisi<span className="text-danger">*</span></label>
-                                            <select className="form-control form-swantik" value={formik.values.businessUnit || ''} onChange={(e) => formik.setFieldValue('businessUnit', e.target.value)}>
-                                                <option value="1">Unit Kesejahteraan dan Pelayanan</option>
-                                                <option value="2">Unit Keamanan dan ketertiban</option>
-                                                <option value="3">Unit Pemerintahan</option>
-                                                <option value="4">Dusun</option>
+                                            <select className="form-control form-swantik" value={formik.values.businessId} onChange={(e) => formik.setFieldValue('businessId', e.target.value)}>
+                                                <option value="">--Pilih Bisnis Unit--</option>
+                                                {business?.map((data, index)=>
+                                                    <option key={index} value={data.id}>{data.name}</option>
+                                                )}
                                             </select>
-                                            {formik.errors.businessUnit && formik.touched.businessUnit ?
-                                                <div className="text-danger text-sm ">{formik.errors.businessUnit}</div> : null
+                                            {formik.errors.businessId && formik.touched.businessId ?
+                                                <div className="text-danger text-sm ">{formik.errors.businessId}</div> : null
+                                            }
+                                        </div>
+                                        <div className="form-group m-t-10">
+                                            <label className="font-bold">Residence<span className="text-danger">*</span></label>
+                                            <select className="form-control form-swantik" value={formik.values.residenceId} onChange={(e) => formik.setFieldValue('residenceId', e.target.value)}>
+                                                <option value="">--Pilih Residence--</option>
+                                                {residence?.map((data, index)=>
+                                                    <option key={index} value={data.id}>{data.name}</option>
+                                                )}
+                                            </select>
+                                            {formik.errors.residenceId && formik.touched.residenceId ?
+                                                <div className="text-danger text-sm ">{formik.errors.residenceId}</div> : null
                                             }
                                         </div>
                                     </Grid>

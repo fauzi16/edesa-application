@@ -1,7 +1,7 @@
 import React from 'react';
 import {Grid,Container} from '@mui/material';
 const Footer = () => {
-    return(
+    return(typeof window !== 'undefined'  ?
         <Container>
             <Grid container spacing={2} style={{marginTop:'5px', borderTop:'1px solid #ebebeb'}}>
                 <Grid item md={12}>
@@ -10,7 +10,7 @@ const Footer = () => {
                     </div>
                 </Grid>
             </Grid>
-        </Container>
+        </Container> : null
     )
 }
 
