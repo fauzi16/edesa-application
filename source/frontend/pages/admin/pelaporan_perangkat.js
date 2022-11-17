@@ -15,6 +15,8 @@ import { useRouter } from 'next/router'
 import DataTable from 'react-data-table-component';
 import {orderBy} from 'lodash';
 import {dateTimeFormat} from '../../utils/helpers';
+import * as Yup from 'yup';
+import {useFormik} from 'formik';
 const PelaporanPerangkat = () => {
     const [issues, setIssues] = useState([]);
     const router = useRouter();
@@ -22,6 +24,8 @@ const PelaporanPerangkat = () => {
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const [id, setId] = useState('');
     const [open, setOpen] = useState(false);
+    const [openPenugasan, setOpenPenugasan] = useState(false);
+    const [idIssue, setIdIssue] = useState('');
     const [pengaduan, setPengaduan] = useState({});
     const style = {
         position: 'absolute',
@@ -32,6 +36,8 @@ const PelaporanPerangkat = () => {
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
+        height: '80vh',
+        overflowY:'auto',
     };
     useEffect(()=>{
         const url = `http://103.176.78.92:8080/users/find-by-username`;
@@ -65,7 +71,6 @@ const PelaporanPerangkat = () => {
         axios.post(url,data_perangkat, head)
         .then(resp => {
             setIssues(resp.data)
-            console.log(resp.data)
         }).catch(err => {
             console.log('err', err)
         });  
@@ -73,7 +78,9 @@ const PelaporanPerangkat = () => {
 
 
     useEffect(()=>{
-        getIssues();
+        if(id){
+            getIssues();
+        }
     },[id])
 
     const columns = [
@@ -105,7 +112,16 @@ const PelaporanPerangkat = () => {
                 >
                     <VisibilityIcon/>
                 </a>
-                {row.status !== 'CLOSED' && <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>}
+                {row.status !== 'CLOSED' && 
+                    <a 
+                        onClick={()=>{
+                            setOpenPenugasan(true);
+                            setIdIssue(row.id)
+                        }}
+                    >
+                        <EditIcon/>
+                    </a>
+                }
             </div>
             },
         },
@@ -146,6 +162,61 @@ const PelaporanPerangkat = () => {
             },
         },
     };
+    const schema = Yup.object().shape({});
+    const initialValues = {
+        comment: '',
+    };
+
+    const formik = useFormik({
+        initialValues,
+        validationSchema: schema,
+        onSubmit: async (values, action) => {
+            const url = `http://103.176.78.92:8080/issue/step3-inprogress-laporan-oleh-petugas-desa`;
+            const urlComment = `http://103.176.78.92:8080/issue/add-comment`;
+            const data ={
+                issueId: Number(idIssue),
+            }
+            const dataComment ={
+                comment: values.comment,
+                commentBy: Number(id.id),
+                issueId: Number(idIssue)
+            }
+            const head = {
+                headers: {
+                    'Authorization': `Bearer ${cookie.get(TOKEN)}`
+                }
+            }
+            axios.post(url, data, head)
+            .then(function (response) {
+                if (response.status === 200) {
+                    if(values.comment !== ''){
+                        axios.post(urlComment, dataComment, head)
+                        .then(function (response) {
+                            if (response.status !== 200) {
+                                setOpenPenugasan(false);  
+                            } else {
+                                setTimeout(() => {        
+                                    window.open("/admin/pelaporan_perangkat","_self")
+                                }, 200);
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        });
+                    } else{
+                        setTimeout(() => {  
+                            window.open("/admin/pelaporan_perangkat","_self")
+                        }, 200);
+                    }
+                    
+                }
+            })
+            .catch(function (error) {
+                console.log(error)
+            });
+
+        },
+    });
     return(
         <Fragment>
             <Head title="Manajamen Pengaduan - E-DESA"/>
@@ -231,6 +302,25 @@ const PelaporanPerangkat = () => {
                                     </tr>
                                 </tbody>
                             </table>
+                        </Paper>
+                    </Modal>
+                    <Modal
+                        open={openPenugasan}
+                        onClose={()=> setOpenPenugasan(false)}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Paper sx={style}>
+                            <h3>Ubah Status Pengaduan</h3>
+                            <hr/>
+                            <form onSubmit={formik.handleSubmit}>
+                                <div className="form-group m-t-10">
+                                    <label className="font-bold">Beri Komentar (jika ada)</label>
+                                    <textarea name="textarea" className="form-control form-swantik" rows="4" value={formik.values.comment} onChange={(e)=> formik.setFieldValue('comment', e.target.value)}></textarea>
+                                </div>    
+                                <br/>
+                                <Button variant="contained" color="primary" type="submit">Simpan</Button>           
+                            </form>
                         </Paper>
                     </Modal>
                 </div>

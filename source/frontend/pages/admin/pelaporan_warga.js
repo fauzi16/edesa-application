@@ -31,6 +31,8 @@ const Pelaporan = () => {
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
+        height: '80vh',
+        overflowY:'auto',
     };
     useEffect(()=>{
         const url = `http://103.176.78.92:8080/users/find-by-username`;

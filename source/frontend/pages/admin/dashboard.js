@@ -29,6 +29,8 @@ const Dashboard = () => {
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
+        height: '80vh',
+        overflowY:'auto',
     };
     const getResidence = () => {
         const url = `http://103.176.78.92:8080/residences`;

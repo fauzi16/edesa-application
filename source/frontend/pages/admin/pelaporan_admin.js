@@ -33,6 +33,8 @@ const PelaporanAdmin = () => {
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
+        height: '80vh',
+        overflowY:'auto',
     };
     const getIssues = () => {
         const url = `http://103.176.78.92:8080/issues`;
