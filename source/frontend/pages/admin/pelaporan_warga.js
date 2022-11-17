@@ -73,8 +73,10 @@ const Pelaporan = () => {
 
 
     useEffect(()=>{
+       if(id){
         getIssues();
-    },[])
+       }
+    },[id])
 
     const columns = [
         {
@@ -145,7 +147,7 @@ const Pelaporan = () => {
             },
         },
     };
-    console.log({pengaduan})
+
     return(
         <Fragment>
             <Head title="Manajamen Pengaduan - E-DESA"/>
