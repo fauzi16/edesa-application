@@ -113,7 +113,7 @@ const Penugasan = () => {
             const data ={
                 adminId: idAdmin.id,
                 businessUnitId: values.businessId,
-                issueId: first(users)?.userInfoId,
+                issueId: id,
                 residenceId: values.residenceId,
             }
             const head = {

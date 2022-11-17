@@ -26,6 +26,7 @@ const PelaporanPerangkat = () => {
     const [open, setOpen] = useState(false);
     const [openPenugasan, setOpenPenugasan] = useState(false);
     const [idIssue, setIdIssue] = useState('');
+    const [statusIssue, setStatusIssue] = useState('');
     const [pengaduan, setPengaduan] = useState({});
     const style = {
         position: 'absolute',
@@ -112,16 +113,17 @@ const PelaporanPerangkat = () => {
                 >
                     <VisibilityIcon/>
                 </a>
-                {row.status !== 'CLOSED' && 
+                {(row.status !== 'CLOSED' && row.status !== 'DONE') ? 
                     <a 
                         onClick={()=>{
                             setOpenPenugasan(true);
                             setIdIssue(row.id)
+                            setStatusIssue(row.status)
                         }}
                     >
                         <EditIcon/>
                     </a>
-                }
+                : null}
             </div>
             },
         },
@@ -171,7 +173,7 @@ const PelaporanPerangkat = () => {
         initialValues,
         validationSchema: schema,
         onSubmit: async (values, action) => {
-            const url = `http://103.176.78.92:8080/issue/step3-inprogress-laporan-oleh-petugas-desa`;
+            const url = `http://103.176.78.92:8080/issue/${statusIssue !== 'INPROGRESS' ? 'step3-inprogress-laporan-oleh-petugas-desa':'step4-done-laporan-oleh-perangkat-desa'}`;
             const urlComment = `http://103.176.78.92:8080/issue/add-comment`;
             const data ={
                 issueId: Number(idIssue),
