@@ -156,7 +156,7 @@ public class UCIssueService {
         issue.setStatus(Issue.STATUS_INPROGRESS);
 
         IssueUpdate issueUpdate = new IssueUpdate();
-        issueUpdate.setComment("Laporan telah ditutup");
+        issueUpdate.setComment("Laporan sedang dikerjakan");
         issueUpdate.setIssueId(issue.getId());
         issueUpdate.setUpdateById(issue.getAssignee());
         issueUpdate.setUpdateTime(new Timestamp(System.currentTimeMillis()));
