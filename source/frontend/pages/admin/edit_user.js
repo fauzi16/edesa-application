@@ -84,9 +84,19 @@ const EditUser = () => {
         alamat: Yup.string().required('Alamat wajib diisi'),
         phone: Yup.string().required('Nomor HP wajib diisi'),
         dateOfBirth: Yup.string().required('Tanggal lahir wajib diisi'),
-        businessId: Yup.string().required('Divisi wajib diisi'),
+        businessId: Yup.string()
+        .when('role', {
+          is: '2',
+          then: Yup.string()
+            .required('Divisi wajib diisi'),
+        }),
         role: Yup.string().required('Role wajib dipilih'),
-        residenceId: Yup.string().required('Residence wajib diisi'),
+        residenceId: Yup.string().nullable()
+        .when('role', {
+          is: '2',
+          then: Yup.string()
+            .required('Residence wajib diisi'),
+        }),
     });
     const initialValues = {
         name: '',
@@ -101,9 +111,9 @@ const EditUser = () => {
         formik.setFieldValue('name', first(users)?.userInfo?.name || '')
         formik.setFieldValue('alamat', first(users)?.userInfo?.address || '')
         formik.setFieldValue('phone', first(users)?.userInfo?.hp || '')
-        formik.setFieldValue('businessId', first(users)?.userInfo?.businessUnitId || '')
+        formik.setFieldValue('businessId', first(users)?.userInfo?.businessUnitId || undefined)
         formik.setFieldValue('role', first(users)?.userInfo?.roleId || '')
-        formik.setFieldValue('residenceId', first(users)?.userInfo?.residenceId || '')
+        formik.setFieldValue('residenceId', first(users)?.userInfo?.residenceId || undefined)
     },[users])
 
     const formik = useFormik({

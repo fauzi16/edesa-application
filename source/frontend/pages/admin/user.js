@@ -73,7 +73,7 @@ const User = () => {
             sortable: false,
             width: '100px',
             cell: (row,index) => {return <div key={index}>
-              <a onClick={()=>router.push(`/admin/edit_user?id=${row.id}`)}>{row.id}<EditIcon/></a>
+              <a onClick={()=>router.push(`/admin/edit_user?id=${row.id}`)}><EditIcon/></a>
             </div>
             },
         },

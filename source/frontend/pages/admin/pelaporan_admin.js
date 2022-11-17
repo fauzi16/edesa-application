@@ -93,7 +93,7 @@ const PelaporanAdmin = () => {
                 >
                     <VisibilityIcon/>
                 </a>
-                {row.status !== 'CLOSED' && <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>}
+                {row.status === 'NEW' && <a onClick={()=>router.push(`/admin/penugasan?id=${row.id}`)}><EditIcon/></a>}
                 {row.status !== 'CLOSED' && 
                     <a
                         onClick={()=>{
@@ -161,7 +161,7 @@ const PelaporanAdmin = () => {
                     setOpenClosed(false);
                 } else {
                     setOpenClosed(false);
-                    router.push("/admin/pelaporan_warga")
+                    router.push("/admin/pelaporan_admin")
                 }
             })
             .catch(function (error) {
